@@ -1,0 +1,6 @@
+@DiveHubBackend_HostAddress = http://localhost:5109
+
+GET {{DiveHubBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

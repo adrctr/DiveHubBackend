@@ -1,0 +1,34 @@
+﻿# Rider
+.idea/
+.idea/**
+
+# .NET Build Results
+bin/
+obj/
+# User-specific files
+.vs/
+.vscode/
+
+# User-specific settings files
+*.[Cc]ache
+*.user
+*.userosscache
+*.suo
+*.userprefs
+Thumbs.db
+Desktop.ini
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer log files
+*.cab
+*.log
+
+# DotNet specific
+project.lock.json
+project.fragment.lock.json
+artifacts/
