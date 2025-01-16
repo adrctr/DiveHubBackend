@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using DiveHub.Core.Entities;
 using DiveHub.Core.Interfaces;
 
 namespace DiveHub.Infrastructure.Storage;

@@ -69,8 +69,8 @@ public class DiveServiceTests
         Assert.Equal(2, result[0].DivePhotos.Count); // Vérifie le nombre de photos
 
         Assert.Equal("Dive 2", result[1].DiveName);
-        Assert.Equal(1, result[1].DivePoints.Count); // Vérifie le nombre de points
-        Assert.Equal(1, result[1].DivePhotos.Count); // Vérifie le nombre de photos
+        Assert.Single(result[1].DivePoints); // Vérifie le nombre de points
+        Assert.Single(result[1].DivePhotos); // Vérifie le nombre de photos
     }
 
     [Fact]

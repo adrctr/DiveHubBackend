@@ -1,4 +1,6 @@
-﻿namespace DiveHub.Core.Interfaces;
+﻿using DiveHub.Core.Entities;
+
+namespace DiveHub.Core.Interfaces;
 
 public interface IStorageService<T> where T : class 
 {

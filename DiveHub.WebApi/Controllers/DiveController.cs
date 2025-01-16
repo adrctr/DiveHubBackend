@@ -1,9 +1,8 @@
 ﻿using DiveHub.Application.Services;
 using DiveHub.Core.Entities;
-
-namespace DiveHub.WebApi.Controllers;
-
 using Microsoft.AspNetCore.Mvc;
+
+namespace DiveHubWebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

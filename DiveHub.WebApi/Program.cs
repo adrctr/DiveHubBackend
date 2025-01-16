@@ -26,6 +26,15 @@ builder.Services.AddSingleton<IStorageService<Dive>>(_ =>
     return new FileStorageService<Dive>(filePath);
 });
 builder.Services.AddScoped<DiveService>();
+
+
+builder.Services.AddSingleton<IStorageService<DivePoint>>(_ =>
+{
+    const string filePath = "Data/divesPoint.json"; // Optionally, retrieve this from configuration
+    return new FileStorageService<DivePoint>(filePath);
+});
+
+builder.Services.AddScoped<DivePointService>();
 #endregion
 
 var app = builder.Build();
