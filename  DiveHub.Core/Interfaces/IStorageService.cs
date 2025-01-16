@@ -1,6 +1,6 @@
 ﻿namespace DiveHub.Core.Interfaces;
 
-public interface IStorageService<T>
+public interface IStorageService<T> where T : class 
 {
     Task<List<T>> GetAllAsync();
     Task<T?> GetByIdAsync(int id);

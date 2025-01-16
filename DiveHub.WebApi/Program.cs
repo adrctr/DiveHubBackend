@@ -13,8 +13,19 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 #region services
-builder.Services.AddSingleton<IStorageService<User>>(_ => new FileStorageService<User>("Data/users.json"));
+builder.Services.AddSingleton<IStorageService<User>>(_ =>
+{
+    const string filePath = "Data/users.json"; // Optionally, retrieve this from configuration
+    return new FileStorageService<User>(filePath);
+});
 builder.Services.AddScoped<UserService>();
+
+builder.Services.AddSingleton<IStorageService<Dive>>(_ =>
+{
+    const string filePath = "Data/dives.json"; // Optionally, retrieve this from configuration
+    return new FileStorageService<Dive>(filePath);
+});
+builder.Services.AddScoped<DiveService>();
 #endregion
 
 var app = builder.Build();

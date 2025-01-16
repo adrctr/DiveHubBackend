@@ -1,11 +1,11 @@
 ﻿namespace DiveHub.Core.Entities;
 public class DivePhoto
 {
-    public int DivephotoId { get; set; }
+    public int DivePhotoId { get; set; }
 
     public int DiveId { get; set; }
 
-    public string Filename { get; set; } = string.Empty;
+    public string FileName { get; set; } = string.Empty;
 
     public string Url { get; set; } = string.Empty;
 

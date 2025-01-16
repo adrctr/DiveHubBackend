@@ -20,7 +20,7 @@ public class FileStorageService<T> : IStorageService<T> where T : class
     public async Task<List<T>> GetAllAsync()
     {
         var json = await File.ReadAllTextAsync(_filePath);
-        return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+        return JsonSerializer.Deserialize<List<T>>(json) ?? [];
     }
 
     public async Task<T?> GetByIdAsync(int id)

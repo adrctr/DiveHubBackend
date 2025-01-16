@@ -7,6 +7,6 @@
 - Application
   - Contient les cas d'utilisation et les DTO.
 - -Infrastructure
-    - Contient les implémentations des interfaces (sauvegarde dans les fichiers JSON, etc.).
+    - Contient les implémentations des interfaces (DbContext, migrations,sauvegarde dans les fichiers JSON, etc.).
 - WebAPI
     - Contient les contrôleurs et le point d'entrée de l'application (API Web ASP.NET Core).
