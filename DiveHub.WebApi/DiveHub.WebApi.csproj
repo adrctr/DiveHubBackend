@@ -126,4 +126,13 @@
       <Content Include="bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\DiveHub.Application\DiveHub.Application.csproj" />
+      <ProjectReference Include="..\DiveHub.Infrastructure\DiveHub.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Data\" />
+    </ItemGroup>
+
 </Project>

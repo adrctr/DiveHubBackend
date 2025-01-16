@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiveHub.Application", "Dive
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiveHub.Infrastructure", "DiveHub.Infrastructure\DiveHub.Infrastructure.csproj", "{B76CD947-F3AE-4909-8F6F-93BCD624915B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiveHub.Tests", "DiveHub.Tests\DiveHub.Tests.csproj", "{1ACAA089-7EC5-43E0-A63B-F990F7CA0E89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{B76CD947-F3AE-4909-8F6F-93BCD624915B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B76CD947-F3AE-4909-8F6F-93BCD624915B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B76CD947-F3AE-4909-8F6F-93BCD624915B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ACAA089-7EC5-43E0-A63B-F990F7CA0E89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ACAA089-7EC5-43E0-A63B-F990F7CA0E89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ACAA089-7EC5-43E0-A63B-F990F7CA0E89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ACAA089-7EC5-43E0-A63B-F990F7CA0E89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
