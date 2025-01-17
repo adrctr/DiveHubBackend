@@ -1,46 +1,98 @@
-﻿using DiveHub.Application.Services;
+﻿using DiveHub.Application.Interfaces;
+using DiveHub.Application.Services;
 using DiveHub.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DiveHubWebApi.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-public class DiveController(DiveService diveService) : ControllerBase
-{
-    [HttpGet]
-    public async Task<ActionResult<List<Dive>>> GetAll()
+    [ApiController]
+    public class DivesController(IDiveService diveService) : ControllerBase
     {
-        return Ok(await diveService.GetAllDivesAsync());
-    }
+        // GET: api/dives
+        [HttpGet]
+        public async Task<ActionResult<List<Dive>>> GetAllDives()
+        {
+            var dives = await diveService.GetAllDivesAsync();
+            return Ok(dives);
+        }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Dive>> GetById(int id)
-    {
-        var dive = await diveService.GetDiveByIdAsync(id);
-        if (dive == null) return NotFound();
-        return Ok(dive);
-    }
+        // GET: api/dives/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Dive>> GetDiveById(int id)
+        {
+            var dive = await diveService.GetDiveByIdAsync(id);
+            if (dive == null)
+            {
+                return NotFound();
+            }
+            return Ok(dive);
+        }
 
-    [HttpPost]
-    public async Task<ActionResult> Add(Dive dive)
-    {
-        await diveService.AddDiveAsync(dive);
-        return CreatedAtAction(nameof(GetById), new { id = dive.DiveId }, dive);
-    }
+        // POST: api/dives
+        [HttpPost]
+        public async Task<ActionResult<Dive>> AddDive([FromBody] Dive dive)
+        {
+            if (dive == null)
+            {
+                return BadRequest("Dive cannot be null");
+            }
 
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult> Update(int id, Dive dive)
-    {
-        if (id != dive.DiveId) return BadRequest();
-        await diveService.UpdateDiveAsync(dive);
-        return NoContent();
-    }
+            await diveService.AddDiveAsync(dive);
+            return CreatedAtAction(nameof(GetDiveById), new { id = dive.DiveId }, dive);
+        }
 
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> Delete(int id)
-    {
-        await diveService.DeleteDiveAsync(id);
-        return NoContent();
-    }
+        // PUT: api/dives/{id}
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateDive(int id, [FromBody] Dive dive)
+        {
+            if (id != dive.DiveId)
+            {
+                return BadRequest("Dive ID mismatch");
+            }
+
+            var existingDive = await diveService.GetDiveByIdAsync(id);
+            if (existingDive == null)
+            {
+                return NotFound();
+            }
+
+            await diveService.UpdateDiveAsync(dive);
+            return NoContent();
+        }
+
+        // DELETE: api/dives/{id}
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteDive(int id)
+        {
+            var dive = await diveService.GetDiveByIdAsync(id);
+            if (dive == null)
+            {
+                return NotFound();
+            }
+
+            await diveService.DeleteDiveAsync(id);
+            return NoContent();
+        }
+
+        // POST: api/dives/{id}/add-dive-point
+        [HttpPost("{id}/add-dive-point")]
+        public async Task<ActionResult> AddDivePointToDive(int id, [FromBody] DivePoint divePoint)
+        {
+            if (divePoint == null)
+            {
+                return BadRequest("DivePoint cannot be null");
+            }
+
+            await diveService.AddDivePointAsync(id, divePoint);
+            return NoContent();
+        }
+
+        // GET: api/dives/{id}/dive-points
+        [HttpGet("{id}/dive-points")]
+        public async Task<ActionResult<List<DivePoint>>> GetDivePoints(int id)
+        {
+            var divePoints = await diveService.GetDivePointsAsync(id);
+            return Ok(divePoints);
+        }
 }

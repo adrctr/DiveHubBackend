@@ -1,4 +1,5 @@
 
+using DiveHub.Application.Interfaces;
 using DiveHub.Application.Services;
 using DiveHub.Core.Entities;
 using DiveHub.Core.Interfaces;
@@ -13,28 +14,18 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 #region services
-builder.Services.AddSingleton<IStorageService<User>>(_ =>
-{
-    const string filePath = "Data/users.json"; // Optionally, retrieve this from configuration
-    return new FileStorageService<User>(filePath);
-});
-builder.Services.AddScoped<UserService>();
+// Ajouter les services de stockage JSON pour Dive et DivePoint
+builder.Services.AddSingleton<IStorageService<User>>(provider => new FileStorageService<User>("Data/users.json"));
+builder.Services.AddSingleton<IStorageService<Dive>>(provider => new FileStorageService<Dive>("Data/dives.json"));
+builder.Services.AddSingleton<IStorageService<DivePoint>>(provider => new FileStorageService<DivePoint>("Data/divepoints.json"));
+builder.Services.AddSingleton<IStorageService<DivePhoto>>(provider => new FileStorageService<DivePhoto>("Data/divephoto.json"));
 
-builder.Services.AddSingleton<IStorageService<Dive>>(_ =>
-{
-    const string filePath = "Data/dives.json"; // Optionally, retrieve this from configuration
-    return new FileStorageService<Dive>(filePath);
-});
-builder.Services.AddScoped<DiveService>();
+// Ajouter les services de l'application
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDiveService, DiveService>();
+builder.Services.AddScoped<IDivePointService,DivePointService>();
+builder.Services.AddScoped<IDivePhotoService,DivePhotoService>();
 
-
-builder.Services.AddSingleton<IStorageService<DivePoint>>(_ =>
-{
-    const string filePath = "Data/divesPoint.json"; // Optionally, retrieve this from configuration
-    return new FileStorageService<DivePoint>(filePath);
-});
-
-builder.Services.AddScoped<DivePointService>();
 #endregion
 
 var app = builder.Build();

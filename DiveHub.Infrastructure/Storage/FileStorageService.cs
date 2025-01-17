@@ -27,7 +27,7 @@ public class FileStorageService<T> : IStorageService<T> where T : class
     public async Task<T?> GetByIdAsync(int id)
     {
         var items = await GetAllAsync();
-        var propertyInfo = typeof(T).GetProperty("UserId") ?? typeof(T).GetProperty($"{typeof(T).Name}Id");
+        var propertyInfo = typeof(T).GetProperty($"{typeof(T).Name}Id");
         return propertyInfo != null
             ? items.FirstOrDefault(item => propertyInfo.GetValue(item)?.Equals(id) == true)
             : null;
@@ -36,7 +36,7 @@ public class FileStorageService<T> : IStorageService<T> where T : class
     public async Task AddAsync(T item)
     {
         var items = await GetAllAsync();
-        var propertyInfo = typeof(T).GetProperty("UserId") ?? typeof(T).GetProperty($"{typeof(T).Name}Id");
+        var propertyInfo = typeof(T).GetProperty($"{typeof(T).Name}Id");
 
         if (propertyInfo != null && propertyInfo.PropertyType == typeof(int))
         {
@@ -51,7 +51,7 @@ public class FileStorageService<T> : IStorageService<T> where T : class
     public async Task UpdateAsync(T item)
     {
         var items = await GetAllAsync();
-        var propertyInfo = typeof(T).GetProperty("UserId") ?? typeof(T).GetProperty($"{typeof(T).Name}Id");
+        var propertyInfo = typeof(T).GetProperty($"{typeof(T).Name}Id");
 
         if (propertyInfo == null)
         {
@@ -73,7 +73,7 @@ public class FileStorageService<T> : IStorageService<T> where T : class
     public async Task DeleteAsync(int id)
     {
         var items = await GetAllAsync();
-        var propertyInfo = typeof(T).GetProperty("UserId") ?? typeof(T).GetProperty($"{typeof(T).Name}Id");
+        var propertyInfo = typeof(T).GetProperty($"{typeof(T).Name}Id");
 
         if (propertyInfo == null)
         {
