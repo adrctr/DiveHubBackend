@@ -1,42 +1,42 @@
-﻿using DiveHub.Application.Interfaces;
+﻿using AutoMapper;
+using DiveHub.Application.Interfaces;
 using DiveHub.Core.Entities;
 using DiveHub.Core.Interfaces;
 
 namespace DiveHub.Application.Services;
 
-public class UserService(IStorageService<User> storageService, IDiveService diveService) :IUserService
+public class UserService(IRepository<User> userRepository, IMapper mapper) : IUserService
 {
-    public async Task<List<User>> GetAllUsersAsync() => await storageService.GetAllAsync();
-
-    public async Task<User?> GetUserByIdAsync(int id) => await storageService.GetByIdAsync(id);
-
-    public async Task AddUserAsync(User user) => await storageService.AddAsync(user);
-
-    public async Task UpdateUserAsync(User user) => await storageService.UpdateAsync(user);
-
-    public async Task DeleteUserAsync(int id) => await storageService.DeleteAsync(id);
-    
-    /// <summary>
-    /// Ajoute une plongée a l'utilisateur
-    /// </summary>
-    /// <param name="userid"></param>
-    /// <param name="dive"></param>
-    public async Task AddDiveAsync(int userid, Dive dive)
+    public async Task CreateUserAsync(UserDto userDto)
     {
-        var user = await storageService.GetByIdAsync(userid);
-        dive.UserId = userid;
-        // Mise à jour de l'utilisateur avec la nouvelle plongée
-        if (user != null) await diveService.AddDiveAsync(dive);
+        var user = mapper.Map<User>(userDto);
+        await userRepository.AddAsync(user);
     }
 
-    /// <summary>
-    /// Récupérer les plongées d'un utilisateur 
-    /// </summary>
-    /// <param name="diveId"></param>
-    /// <param name="userid"></param>
-    /// <returns></returns>
-    public async Task<List<Dive>> GetDiveAsync(int userid)
+    public async Task<UserDto?> GetUserByIdAsync(int userId)
     {
-        return await diveService.GetDiveByUserIdAsync(userid);
+        var user = await userRepository.GetByIdAsync(userId);
+        return mapper.Map<UserDto>(user);
+    }
+
+    public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+    {
+        var users = await userRepository.GetAllAsync();
+        return mapper.Map<IEnumerable<UserDto>>(users);
+    }
+
+    public async Task UpdateUserAsync(UserDto userDto)
+    {
+        var user = await userRepository.GetByIdAsync(userDto.UserId);
+        if (user != null)
+        {
+            mapper.Map(userDto, user);
+            await userRepository.UpdateAsync(user);
+        }
+    }
+
+    public async Task DeleteUserAsync(int userId)
+    {
+        await userRepository.DeleteAsync(userId);
     }
 }

@@ -8,7 +8,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ DiveHub.Core\DiveHub.Core.csproj" />
-      <ProjectReference Include="..\DiveHub.Infrastructure\DiveHub.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="13.0.1" />
     </ItemGroup>
 
 </Project>

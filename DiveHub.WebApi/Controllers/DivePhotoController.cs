@@ -1,4 +1,5 @@
-﻿using DiveHub.Core.Entities;
+﻿using DiveHub.Application.Interfaces;
+using DiveHub.Core.Entities;
 using DiveHub.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,39 +7,38 @@ namespace DiveHubWebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class DivePhotoController(DivePhotoService divePhotoService) : ControllerBase
+public class DivePhotoController(IDivePhotoService divePhotoService) : ControllerBase
 {
-    [HttpGet]
-    public async Task<ActionResult<List<DivePhoto>>> GetAll()
+    [HttpPost]
+    public async Task<IActionResult> CreateDivePhoto([FromBody] DivePhotoDto divePhotoDto)
     {
-        return Ok(await divePhotoService.GetAllDivePhotosAsync());
+        await divePhotoService.CreateDivePhotoAsync(divePhotoDto, 1); //TODO : Change ressoruce iD
+        return Ok();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<DivePhoto>> GetById(int id)
+    public async Task<IActionResult> GetDivePhotoById(int id)
     {
         var divePhoto = await divePhotoService.GetDivePhotoByIdAsync(id);
-        if (divePhoto == null) return NotFound();
-        return Ok(divePhoto);
+        return divePhoto != null ? Ok(divePhoto) : NotFound();
     }
 
-    [HttpPost]
-    public async Task<ActionResult> Add(DivePhoto divePhoto)
+    [HttpGet]
+    public async Task<IActionResult> GetAllDivePhotos()
     {
-        await divePhotoService.AddDivePhotoAsync(divePhoto);
-        return CreatedAtAction(nameof(GetById), new { id = divePhoto.DivePhotoId }, divePhoto);
+        var divePhotos = await divePhotoService.GetAllDivePhotosAsync();
+        return Ok(divePhotos);
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult> Update(int id, DivePhoto divePhoto)
+    [HttpPut]
+    public async Task<IActionResult> UpdateDivePhoto([FromBody] DivePhotoDto divePhotoDto)
     {
-        if (id != divePhoto.DivePhotoId) return BadRequest();
-        await divePhotoService.UpdateDivePhotoAsync(divePhoto);
+        await divePhotoService.UpdateDivePhotoAsync(divePhotoDto);
         return NoContent();
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> Delete(int id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteDivePhoto(int id)
     {
         await divePhotoService.DeleteDivePhotoAsync(id);
         return NoContent();

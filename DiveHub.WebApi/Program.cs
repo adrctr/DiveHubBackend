@@ -1,9 +1,11 @@
 
 using DiveHub.Application.Interfaces;
+using DiveHub.Application.Mapping;
 using DiveHub.Application.Services;
-using DiveHub.Core.Entities;
 using DiveHub.Core.Interfaces;
-using DiveHub.Infrastructure.Storage;
+using DiveHub.Infrastructure.Extensions;
+using DiveHub.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,19 +15,28 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-#region services
-// Ajouter les services de stockage JSON pour Dive et DivePoint
-builder.Services.AddSingleton<IStorageService<User>>(provider => new FileStorageService<User>("Data/users.json"));
-builder.Services.AddSingleton<IStorageService<Dive>>(provider => new FileStorageService<Dive>("Data/dives.json"));
-builder.Services.AddSingleton<IStorageService<DivePoint>>(provider => new FileStorageService<DivePoint>("Data/divepoints.json"));
-builder.Services.AddSingleton<IStorageService<DivePhoto>>(provider => new FileStorageService<DivePhoto>("Data/divephoto.json"));
+#region EF Core SQLite
+// Ajout des services nécessaires
+builder.Services.AddDbContext<SQLiteDbContext>(options =>
+    options.UseSqlite("Data Source=DiveHubDB.db"));
 
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+builder.Services.AddDatabaseInitialization("Data Source=DiveHubDB.db");
+#endregion
+
+
+#region services
 // Ajouter les services de l'application
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDiveService, DiveService>();
 builder.Services.AddScoped<IDivePointService,DivePointService>();
 builder.Services.AddScoped<IDivePhotoService,DivePhotoService>();
+#endregion
 
+
+#region AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 #endregion
 
 var app = builder.Build();
@@ -33,6 +44,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Crée la base de données au démarrage si elle n'existe pas
+    using (var scope = app.Services.CreateScope())
+    {
+        var initializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
+        initializer.Initialize(); // Appelle la méthode pour créer la base de données
+    }
     app.MapOpenApi();
 }
 

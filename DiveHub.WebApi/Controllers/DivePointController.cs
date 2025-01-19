@@ -1,85 +1,47 @@
-﻿using DiveHub.Application.Interfaces;
+﻿using DiveHub.Application.Dto;
+using DiveHub.Application.Interfaces;
 using DiveHub.Core.Entities;
 using DiveHub.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DiveHubWebApi.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
-public class DivePointsController : ControllerBase
+[Route("api/[controller]")]
+public class DivePointController(IDivePointService divePointService) : ControllerBase
 {
-    private readonly IDivePointService _divePointService;
-
-    public DivePointsController(IDivePointService divePointService)
+    [HttpPost]
+    public async Task<IActionResult> CreateDivePoint([FromBody] DivePointDto divePointDto)
     {
-        _divePointService = divePointService;
+        await divePointService.CreateDivePointAsync(divePointDto, 1); //TODO: Change User ID 
+        return Ok();
     }
 
-    // GET: api/divepoints
-    [HttpGet]
-    public async Task<ActionResult<List<DivePoint>>> GetAllDivePoints()
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetDivePointById(int id)
     {
-        var divePoints = await _divePointService.GetAllDivePointsAsync();
+        var divePoint = await divePointService.GetDivePointByIdAsync(id);
+        return divePoint != null ? Ok(divePoint) : NotFound();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllDivePoints()
+    {
+        var divePoints = await divePointService.GetAllDivePointsAsync();
         return Ok(divePoints);
     }
 
-    // GET: api/divepoints/{id}
-    [HttpGet("{id}")]
-    public async Task<ActionResult<DivePoint>> GetDivePointById(int id)
+    [HttpPut]
+    public async Task<IActionResult> UpdateDivePoint([FromBody] DivePointDto divePointDto)
     {
-        var divePoint = await _divePointService.GetDivePointByIdAsync(id);
-        if (divePoint == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(divePoint);
-    }
-
-    // POST: api/divepoints
-    [HttpPost]
-    public async Task<ActionResult<DivePoint>> AddDivePoint([FromBody] DivePoint divePoint)
-    {
-        if (divePoint == null)
-        {
-            return BadRequest("DivePoint cannot be null");
-        }
-
-        await _divePointService.AddDivePointAsync(divePoint);
-        return CreatedAtAction(nameof(GetDivePointById), new { id = divePoint.DivePointId }, divePoint);
-    }
-
-    // PUT: api/divepoints/{id}
-    [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateDivePoint(int id, [FromBody] DivePoint divePoint)
-    {
-        if (id != divePoint.DivePointId)
-        {
-            return BadRequest("DivePoint ID mismatch");
-        }
-
-        var existingDivePoint = await _divePointService.GetDivePointByIdAsync(id);
-        if (existingDivePoint == null)
-        {
-            return NotFound();
-        }
-
-        await _divePointService.UpdateDivePointAsync(divePoint);
+        await divePointService.UpdateDivePointAsync(divePointDto);
         return NoContent();
     }
 
-    // DELETE: api/divepoints/{id}
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteDivePoint(int id)
+    public async Task<IActionResult> DeleteDivePoint(int id)
     {
-        var divePoint = await _divePointService.GetDivePointByIdAsync(id);
-        if (divePoint == null)
-        {
-            return NotFound();
-        }
-
-        await _divePointService.DeleteDivePointAsync(id);
+        await divePointService.DeleteDivePointAsync(id);
         return NoContent();
     }
 }

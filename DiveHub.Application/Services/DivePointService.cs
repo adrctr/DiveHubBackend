@@ -1,64 +1,43 @@
-﻿using DiveHub.Application.Interfaces;
+﻿using AutoMapper;
+using DiveHub.Application.Dto;
+using DiveHub.Application.Interfaces;
 using DiveHub.Core.Entities;
 using DiveHub.Core.Interfaces;
 
 namespace DiveHub.Application.Services;
 
-public class DivePointService(IStorageService<DivePoint> divePointStorageService) : IDivePointService
+public class DivePointService(IRepository<DivePoint> divePointRepository, IMapper mapper) : IDivePointService
 {
-    /// <summary>
-    /// Récupérer tous les points GPS
-    /// </summary>
-    /// <returns></returns>
-    public async Task<List<DivePoint>> GetAllDivePointsAsync()
+    public async Task CreateDivePointAsync(DivePointDto divePointDto, int diveId)
     {
-        return await divePointStorageService.GetAllAsync();
+        var divePoint = mapper.Map<DivePoint>(divePointDto);
+        divePoint.DiveId = diveId;
+        await divePointRepository.AddAsync(divePoint);
     }
 
-    /// <summary>
-    /// Récupérer un point GPS par ID
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public async Task<DivePoint?> GetDivePointByIdAsync(int id)
+    public async Task<DivePointDto?> GetDivePointByIdAsync(int divePointId)
     {
-        return await divePointStorageService.GetByIdAsync(id);
-    }
-    /// <summary>
-    /// Récupérer des point GPS par DiveId
-    /// </summary>
-    /// <param name="diveId"></param>
-    /// <returns></returns>
-    public async Task<List<DivePoint>> GetDivePointsByDiveIdAsync(int diveId)
-    {
-        var divePoints = await GetAllDivePointsAsync();
-        return divePoints.Where(dp => dp.DiveId == diveId).ToList();
+        var divePoint = await divePointRepository.GetByIdAsync(divePointId);
+        return mapper.Map<DivePointDto?>(divePoint);
     }
 
-    /// <summary>
-    /// Ajouter un point GPS
-    /// </summary>
-    /// <param name="divePoint"></param>
-    public async Task AddDivePointAsync(DivePoint divePoint)
+    public async  Task<IEnumerable<DivePointDto>> GetAllDivePointsAsync()
     {
-        await divePointStorageService.AddAsync(divePoint);
+        var divePoints = await divePointRepository.GetAllAsync();
+        return mapper.Map<IEnumerable<DivePointDto>>(divePoints);
     }
 
-    /// <summary>
-    /// Mettre à jour un point GPS
-    /// </summary>
-    /// <param name="divePoint"></param>
-    public async Task UpdateDivePointAsync(DivePoint divePoint)
+    public async Task UpdateDivePointAsync(DivePointDto divePointDto)
     {
-        await divePointStorageService.UpdateAsync(divePoint);
+        var divePoint = await divePointRepository.GetByIdAsync(divePointDto.DivePointId);
+        if (divePoint != null)
+        {
+            await divePointRepository.UpdateAsync(mapper.Map<DivePoint>(divePointDto));
+        }
     }
 
-    /// <summary>
-    /// Supprimer un point GPS
-    /// </summary>
-    /// <param name="id"></param>
-    public async Task DeleteDivePointAsync(int id)
+    public async Task DeleteDivePointAsync(int divePointId)
     {
-        await divePointStorageService.DeleteAsync(id);
+        await divePointRepository.DeleteAsync(divePointId);
     }
 }

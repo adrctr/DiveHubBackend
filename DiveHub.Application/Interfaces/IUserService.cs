@@ -4,13 +4,9 @@ namespace DiveHub.Application.Interfaces;
 
 public interface IUserService
 {
-    Task<List<User>> GetAllUsersAsync();
-    Task<User?> GetUserByIdAsync(int id);
-
-    Task AddUserAsync(User user);
-    Task UpdateUserAsync(User user);
-    Task DeleteUserAsync(int id);
-    
-    Task AddDiveAsync(int userid, Dive dive);
-    Task<List<Dive>> GetDiveAsync(int userid);
+    Task CreateUserAsync(UserDto userDto);
+    Task<UserDto?> GetUserByIdAsync(int userId);
+    Task<IEnumerable<UserDto>> GetAllUsersAsync();
+    Task UpdateUserAsync(UserDto userDto);
+    Task DeleteUserAsync(int userId);
 }

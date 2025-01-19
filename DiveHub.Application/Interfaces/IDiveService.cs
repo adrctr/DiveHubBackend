@@ -1,17 +1,12 @@
-﻿using DiveHub.Core.Entities;
+﻿using DiveHub.Application.Dto;
 
 namespace DiveHub.Application.Interfaces;
 
 public interface IDiveService
 {
-    Task<List<Dive>> GetAllDivesAsync();
-    Task<Dive?> GetDiveByIdAsync(int id);
-    Task<List<Dive>> GetDiveByUserIdAsync(int userid);
-
-    Task AddDiveAsync(Dive dive);
-    Task UpdateDiveAsync(Dive dive);
-    Task DeleteDiveAsync(int id);
-
-    Task AddDivePointAsync(int diveId, DivePoint divePoint);
-    Task<DivePoint?> GetDivePointsAsync(int diveId);
+    Task CreateDiveAsync(DiveDto diveDto, int userId);
+    Task<DiveDto?> GetDiveByIdAsync(int diveId);
+    Task<IEnumerable<DiveDto>> GetAllDivesAsync();
+    Task UpdateDiveAsync(DiveDto diveDto);
+    Task DeleteDiveAsync(int diveId);
 }
