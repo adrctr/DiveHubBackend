@@ -7,13 +7,19 @@ namespace DiveHub.Application.Services;
 
 public class DivePhotoService(IRepository<DivePhoto> divePhotoRepository, IMapper mapper) : IDivePhotoService
 {
-    public async Task CreateDivePhotoAsync(DivePhotoDto divePhotoDto, int diveId)
+    public async Task AddDivePhotoAsync(DivePhotoDto divePhotoDto, int diveId)
     {
         var divePhoto = mapper.Map<DivePhoto>(divePhotoDto);
         divePhoto.DiveId = diveId;
         await divePhotoRepository.AddAsync(divePhoto);
     }
 
+    public async Task AddManyDivePhotoAsync(IEnumerable<DivePhotoDto> divePhotoDtos)
+    {
+        var divePhotos = mapper.Map<IEnumerable<DivePhoto>>(divePhotoDtos);
+        // Ajouter tous les DivePhoto en une seule opération
+        await divePhotoRepository.AddRangeAsync(divePhotos);
+    }
     public async Task<DivePhotoDto?> GetDivePhotoByIdAsync(int divePhotoId)
     {
         var divePhoto = await divePhotoRepository.GetByIdAsync(divePhotoId);

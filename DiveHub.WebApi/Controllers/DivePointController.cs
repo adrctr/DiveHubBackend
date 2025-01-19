@@ -13,7 +13,7 @@ public class DivePointController(IDivePointService divePointService) : Controlle
     [HttpPost]
     public async Task<IActionResult> CreateDivePoint([FromBody] DivePointDto divePointDto)
     {
-        await divePointService.CreateDivePointAsync(divePointDto, 1); //TODO: Change User ID 
+        await divePointService.AddDivePointAsync(divePointDto, 1); //TODO: Change User ID 
         return Ok();
     }
 

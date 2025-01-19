@@ -23,6 +23,16 @@ public class Repository<T>(SQLiteDbContext context) : IRepository<T>
     }
 
     /// <summary>
+    /// Ajoute une collection d'entité à la base de données.
+    /// </summary>
+    /// <param name="collection">La collection à ajouter.</param>
+    public async Task AddRangeAsync(IEnumerable<T> collection)
+    {
+        await context.Set<T>().AddRangeAsync(collection);
+        await context.SaveChangesAsync();
+    }
+
+    /// <summary>
     /// Récupère une entité par son identifiant.
     /// </summary>
     /// <param name="id">L'identifiant de l'entité.</param>

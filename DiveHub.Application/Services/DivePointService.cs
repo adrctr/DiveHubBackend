@@ -8,11 +8,18 @@ namespace DiveHub.Application.Services;
 
 public class DivePointService(IRepository<DivePoint> divePointRepository, IMapper mapper) : IDivePointService
 {
-    public async Task CreateDivePointAsync(DivePointDto divePointDto, int diveId)
+    public async Task AddDivePointAsync(DivePointDto divePointDto, int diveId)
     {
         var divePoint = mapper.Map<DivePoint>(divePointDto);
         divePoint.DiveId = diveId;
         await divePointRepository.AddAsync(divePoint);
+    }
+    
+    public async Task AddManyDivePointAsync(IEnumerable<DivePointDto> divePointsDtos)
+    {
+        var divePoints = mapper.Map<IEnumerable<DivePoint>>(divePointsDtos);
+        // Ajouter tous les DivePoint en une seule opération
+        await divePointRepository.AddRangeAsync(divePoints);
     }
 
     public async Task<DivePointDto?> GetDivePointByIdAsync(int divePointId)

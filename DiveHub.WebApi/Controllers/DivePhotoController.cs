@@ -12,7 +12,7 @@ public class DivePhotoController(IDivePhotoService divePhotoService) : Controlle
     [HttpPost]
     public async Task<IActionResult> CreateDivePhoto([FromBody] DivePhotoDto divePhotoDto)
     {
-        await divePhotoService.CreateDivePhotoAsync(divePhotoDto, 1); //TODO : Change ressoruce iD
+        await divePhotoService.AddDivePhotoAsync(divePhotoDto, 1); //TODO : Change ressoruce iD
         return Ok();
     }
 

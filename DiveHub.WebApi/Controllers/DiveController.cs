@@ -16,6 +16,13 @@ public class DiveController(IDiveService diveService) : ControllerBase
         await diveService.CreateDiveAsync(diveDto, 1); //TODO: Change User ID 
         return Ok();
     }
+    
+    [HttpPost("with-points")]
+    public async Task<IActionResult> CreateDiveWithPoints([FromBody] DiveSaveDto diveDto, int userId)
+    {
+        await diveService.CreateDiveWithDetailAsync(diveDto, userId);
+        return Ok();
+    }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetDiveById(int id)

@@ -6,13 +6,51 @@ using DiveHub.Core.Interfaces;
 
 namespace DiveHub.Application.Services;
 
-public class DiveService(IRepository<Dive> diveRepository, IMapper mapper) : IDiveService
+public class DiveService(IRepository<Dive> diveRepository, IDivePhotoService divePhotoService, IDivePointService divePointService, IMapper mapper) : IDiveService
 {
     public async Task CreateDiveAsync(DiveDto diveDto, int userId)
     {
         var dive = mapper.Map<Dive>(diveDto);
         dive.UserId = userId;
         await diveRepository.AddAsync(dive);
+    }
+
+    public async Task CreateDiveWithDetailAsync(DiveSaveDto diveSaveDto, int userId)
+    {
+             // Étape 1 : Sauvegarder la plongée principale
+            var dive = new Dive
+            {
+                UserId = userId,
+                DiveName = diveSaveDto.DiveName,
+                DiveDate = diveSaveDto.DiveDate,
+                Description = diveSaveDto.Description
+            };
+           await diveRepository.AddAsync(dive);
+
+            // Récupérer l'ID généré
+            var diveId = dive.DiveId;
+
+            // Étape 2 : Ajouter les points
+            var divePoints = diveSaveDto.Points.Select(p => new DivePointDto()
+            {
+                DiveId = diveId,
+                Latitude = p.Latitude,
+                Longitude = p.Longitude,
+                Description = p.Description
+            }).ToList();
+
+            await divePointService.AddManyDivePointAsync(divePoints);
+
+            // Étape 3 : Ajouter les photos
+            var divePhotos = diveSaveDto.Photos.Select(p => new DivePhotoDto()
+            {
+                DiveId = diveId,
+                FileName = p.FileName,
+                Url = p.Url,
+                CreatedAt = p.CreatedAt
+            }).ToList();
+
+            await divePhotoService.AddManyDivePhotoAsync(divePhotos);
     }
 
     public async Task<DiveDto?> GetDiveByIdAsync(int diveId)
