@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add CORS services
+builder.Services.AddCors();
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -25,7 +28,6 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddDatabaseInitialization("Data Source=DiveHubDB.db");
 #endregion
 
-
 #region services
 // Ajouter les services de l'application
 builder.Services.AddScoped<IUserService, UserService>();
@@ -33,7 +35,6 @@ builder.Services.AddScoped<IDiveService, DiveService>();
 builder.Services.AddScoped<IDivePointService,DivePointService>();
 builder.Services.AddScoped<IDivePhotoService,DivePhotoService>();
 #endregion
-
 
 #region AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -51,8 +52,10 @@ if (app.Environment.IsDevelopment())
         initializer.Initialize(); // Appelle la méthode pour créer la base de données
     }
     app.MapOpenApi();
+    app.UseCors(options => options.WithOrigins("http://localhost:5228").AllowAnyMethod().AllowAnyHeader());
 }
 
+app.UseCors("AllowSpecificOrigins");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
