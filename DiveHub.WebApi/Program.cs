@@ -5,6 +5,7 @@ using DiveHub.Application.Services;
 using DiveHub.Core.Interfaces;
 using DiveHub.Infrastructure.Extensions;
 using DiveHub.Infrastructure.Persistence;
+using DiveHub.Infrastructure.repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +24,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<SQLiteDbContext>(options =>
     options.UseSqlite("Data Source=DiveHubDB.db"));
 
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IDiveRepository, DiveRepository>();
 
 builder.Services.AddDatabaseInitialization("Data Source=DiveHubDB.db");
 #endregion

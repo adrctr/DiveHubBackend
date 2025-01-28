@@ -1,15 +1,16 @@
 ﻿using System.Linq.Expressions;
 using DiveHub.Core.Interfaces;
+using DiveHub.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiveHub.Infrastructure.Persistence;
+namespace DiveHub.Infrastructure.repositories;
 
 /// <summary>
 /// // Implémentation générique d'un dépôt (Repository) pour la gestion des entités.
 /// </summary>
 /// <param name="context">SQLiteDbContext</param>
 /// <typeparam name="T">Entity</typeparam>
-public class Repository<T>(SQLiteDbContext context) : IRepository<T>
+public class GenericRepository<T>(SQLiteDbContext context) : IRepository<T>
     where T : class
 {
     /// <summary>

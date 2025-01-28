@@ -2,11 +2,10 @@
 using DiveHub.Application.Dto;
 using DiveHub.Application.Interfaces;
 using DiveHub.Core.Entities;
-using DiveHub.Core.Interfaces;
-
+using DiveHub.Infrastructure.repositories;
 namespace DiveHub.Application.Services;
 
-public class DiveService(IRepository<Dive> diveRepository, IDivePhotoService divePhotoService, IDivePointService divePointService, IMapper mapper) : IDiveService
+public class DiveService(IDiveRepository diveRepository, IDivePhotoService divePhotoService, IDivePointService divePointService, IMapper mapper) : IDiveService
 {
     public async Task CreateDiveAsync(DiveDto diveDto, int userId)
     {
@@ -59,10 +58,10 @@ public class DiveService(IRepository<Dive> diveRepository, IDivePhotoService div
         return mapper.Map<DiveDto?>(dive);
     }
 
-    public async Task<IEnumerable<DiveDto>> GetAllDivesAsync()
+    public async Task<IEnumerable<DiveDetailDto>> GetAllDivesAsync()
     {
-        var dives = await diveRepository.GetAllAsync();
-        return mapper.Map<IEnumerable<DiveDto>>(dives);
+        var dives = await diveRepository.GetDivesWihDetails();
+        return mapper.Map<List<DiveDetailDto>>(dives);
     }
 
     public async Task UpdateDiveAsync(DiveDto diveDto)
@@ -79,4 +78,9 @@ public class DiveService(IRepository<Dive> diveRepository, IDivePhotoService div
     {
         await diveRepository.DeleteAsync(diveId);
     }
+
+    // public async Task<IEnumerable<DiveDto>> GetDivesByUserIdAsync()
+    // {
+    //     // return await diveRepository.GetDivesWihDetails();
+    // }
 }
