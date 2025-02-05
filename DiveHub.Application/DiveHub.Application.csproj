@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ DiveHub.Core\DiveHub.Core.csproj" />
       <ProjectReference Include="..\DiveHub.Infrastructure\DiveHub.Infrastructure.csproj" />
     </ItemGroup>
 

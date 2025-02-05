@@ -25,6 +25,7 @@ public class DatabaseInitializer(SQLiteDbContext context)
 {
     public void Initialize()
     {
+        context.Database.EnsureDeleted();
         context.Database.EnsureCreated(); // Crée la base de données et les tables si elles n'existent pas
         context.Users.Add(new User()
         {
