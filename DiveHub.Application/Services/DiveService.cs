@@ -7,9 +7,9 @@ namespace DiveHub.Application.Services;
 
 public class DiveService(IDiveRepository diveRepository, IDivePhotoService divePhotoService, IDivePointService divePointService, IMapper mapper) : IDiveService
 {
-    public async Task CreateDiveAsync(DiveDto diveDto, int userId)
+    public async Task CreateDiveAsync(DiveSaveDto diveSaveDto, int userId)
     {
-        var dive = mapper.Map<Dive>(diveDto);
+        var dive = mapper.Map<Dive>(diveSaveDto);
         dive.UserId = userId;
         await diveRepository.AddAsync(dive);
     }

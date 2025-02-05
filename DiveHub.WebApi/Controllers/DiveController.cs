@@ -11,7 +11,7 @@ namespace DiveHub.WebApi.Controllers;
 public class DiveController(IDiveService diveService) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> CreateDive([FromBody] DiveDto diveDto)
+    public async Task<IActionResult> CreateDive([FromBody] DiveSaveDto diveDto)
     {
         await diveService.CreateDiveAsync(diveDto, 1); //TODO: Change User ID 
         return Ok();
