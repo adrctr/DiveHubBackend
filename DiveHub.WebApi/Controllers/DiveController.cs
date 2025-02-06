@@ -32,7 +32,7 @@ public class DiveController(IDiveService diveService) : ControllerBase
     }
 
     [HttpGet("All")]
-    [ProducesResponseType(typeof(IEnumerable<DiveDetailDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<DiveDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllDives()
     {
         var dives = await diveService.GetAllDivesAsync();
@@ -48,10 +48,11 @@ public class DiveController(IDiveService diveService) : ControllerBase
     }
 
     [HttpPut]
+    [ProducesResponseType(typeof(DiveDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateDive([FromBody] DiveDto diveDto)
     {
         await diveService.UpdateDiveAsync(diveDto);
-        return NoContent();
+        return Ok();
     }
 
     [HttpDelete("{id}")]

@@ -299,7 +299,24 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiveDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiveDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiveDto"
+                }
+              }
+            }
           }
         }
       }
@@ -403,7 +420,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/DiveDetailDto"
+                    "$ref": "#/components/schemas/DiveDto"
                   }
                 }
               },
@@ -411,7 +428,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/DiveDetailDto"
+                    "$ref": "#/components/schemas/DiveDto"
                   }
                 }
               },
@@ -419,7 +436,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/DiveDetailDto"
+                    "$ref": "#/components/schemas/DiveDto"
                   }
                 }
               }
@@ -596,7 +613,7 @@
   },
   "components": {
     "schemas": {
-      "DiveDetailDto": {
+      "DiveDto": {
         "type": "object",
         "properties": {
           "diveId": {
@@ -610,38 +627,6 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "divePoints": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DivePointDto"
-            }
-          },
-          "divePhotos": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DivePhotoDto"
-            }
-          }
-        }
-      },
-      "DiveDto": {
-        "type": "object",
-        "properties": {
-          "diveId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "diveName": {
-            "type": "string"
-          },
-          "diveDate": {
-            "type": "string",
-            "format": "date-time"
           },
           "description": {
             "type": "string",
@@ -730,6 +715,10 @@
       "DiveSavePhotoDto": {
         "type": "object",
         "properties": {
+          "diveId": {
+            "type": "integer",
+            "format": "int32"
+          },
           "fileName": {
             "type": "string"
           },

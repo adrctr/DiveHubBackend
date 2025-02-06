@@ -21,6 +21,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<DatabaseInitializer>();
     }
 }
+
 public class DatabaseInitializer(SQLiteDbContext context)
 {
     public void Initialize()
@@ -35,6 +36,36 @@ public class DatabaseInitializer(SQLiteDbContext context)
             FirstName = "Adrien",
             LastName = "Couturier",
         });
+
+        context.Dives.Add(new Dive()
+        {
+            DiveId = 1,
+            UserId = 1,
+            DiveDate = DateTime.Now,
+            DiveName = "A coral reef dive",
+            Description = "Awesome colorfull coral reef dive",
+            DivePhotos = new List<DivePhoto>()
+            {
+                new DivePhoto
+                {
+                    DiveId = 1,
+                    CreatedAt = DateTime.Now,
+                    FileName = "test.jpg",
+                    Url = "https://test.com/test.jpg"
+                }
+            },
+            DivePoints = new List<DivePoint>()
+            {
+                new DivePoint
+                {
+                    DiveId = 1,
+                    Description = "secret dive",
+                    Longitude = 102.733330,
+                    Latitude = 5.916667
+                    }
+        }
+        });
+
         context.SaveChanges();
     }
 }
