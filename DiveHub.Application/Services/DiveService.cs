@@ -11,11 +11,12 @@ public class DiveService(
     IDivePointService divePointService,
     IMapper mapper) : IDiveService
 {
-    public async Task CreateDiveAsync(DiveSaveDto diveSaveDto, int userId)
+    public async Task<DiveDto> CreateDiveAsync(DiveSaveDto diveSaveDto, int userId)
     {
-        var dive = mapper.Map<Dive>(diveSaveDto);
+        Dive dive = mapper.Map<Dive>(diveSaveDto);
         dive.UserId = userId;
         await diveRepository.AddAsync(dive);
+        return mapper.Map<DiveDto>(dive);
     }
 
     public async Task CreateDiveWithDetailAsync(DiveSaveDto diveSaveDto, int userId)

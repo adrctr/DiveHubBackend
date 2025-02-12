@@ -1,4 +1,5 @@
-﻿using DiveHub.Core.Entities;
+﻿using DiveHub.Application.Dto;
+using DiveHub.Core.Entities;
 
 namespace DiveHub.Application.Interfaces;
 

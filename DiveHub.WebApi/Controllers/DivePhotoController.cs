@@ -1,4 +1,5 @@
-﻿using DiveHub.Application.Interfaces;
+﻿using DiveHub.Application.Dto;
+using DiveHub.Application.Interfaces;
 using DiveHub.Core.Entities;
 using DiveHub.Application.Services;
 using Microsoft.AspNetCore.Mvc;

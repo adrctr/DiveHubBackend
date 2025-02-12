@@ -11,10 +11,11 @@ namespace DiveHub.WebApi.Controllers;
 public class DiveController(IDiveService diveService) : ControllerBase
 {
     [HttpPost]
+    [ProducesResponseType<DiveDto>(StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateDive([FromBody] DiveSaveDto diveDto)
     {
-        await diveService.CreateDiveAsync(diveDto, 1); //TODO: Change User ID 
-        return Ok();
+        DiveDto diveCreated = await diveService.CreateDiveAsync(diveDto, 1); //TODO: Change User ID 
+        return Ok(diveCreated);
     }
     
     [HttpPost("withDetails")]
