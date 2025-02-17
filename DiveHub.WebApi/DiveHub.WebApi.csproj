@@ -136,4 +136,13 @@
       <ProjectReference Include="..\DiveHub.Infrastructure\DiveHub.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Controllers\UserController.cs" />
+      <Compile Remove="Controllers\DivePointController.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
+
 </Project>

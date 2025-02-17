@@ -23,7 +23,7 @@ public class MappingProfile : Profile
         CreateMap<DiveDetailDto, Dive>().ReverseMap();
 
         CreateMap<DivePhoto, DivePhotoDto>().ReverseMap();
-        CreateMap<DiveSavePhotoDto, DivePhoto>().ReverseMap();
+        CreateMap<DivePhotoSaveDto, DivePhoto>().ReverseMap();
         
         CreateMap<DivePoint, DivePointDto>().ReverseMap();
         CreateMap<DiveSavePointDto, DivePoint>().ReverseMap();

@@ -8,13 +8,44 @@ namespace DiveHubWebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class DivePhotoController(IDivePhotoService divePhotoService) : ControllerBase
+public class DivePhotoController(IDivePhotoService divePhotoService, IWebHostEnvironment environment) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> CreateDivePhoto([FromBody] DivePhotoDto divePhotoDto)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadPhotos([FromForm] string diveId, [FromForm] List<IFormFile> files)
     {
-        await divePhotoService.AddDivePhotoAsync(divePhotoDto, 1); //TODO : Change ressoruce iD
-        return Ok();
+        if (files == null || files.Count == 0)
+            return BadRequest("Aucun fichier sélectionné.");
+
+        var uploadsFolder = Path.Combine(environment.WebRootPath, "uploads", "dive_photos");
+        if (!Directory.Exists(uploadsFolder))
+            Directory.CreateDirectory(uploadsFolder);
+
+        List<DivePhotoSaveDto> divePhotos = new();
+
+        foreach (var file in files)
+        {
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var divePhoto = new DivePhotoSaveDto
+            {
+                DiveId = int.Parse(diveId), // Correction ici
+                FileName = fileName,
+                Url = Path.Combine("uploads", "dive_photos", fileName).Replace("\\", "/"),
+                CreatedAt = DateTime.UtcNow
+            };
+
+            divePhotos.Add(divePhoto);
+        }
+
+        await divePhotoService.AddManyDivePhotoAsync(divePhotos); // Ajout de await
+        return Ok(new { message = "Photos enregistrées avec succès!", photoUrls = divePhotos.Select(p => p.Url).ToList() });
     }
 
     [HttpGet("{id}")]

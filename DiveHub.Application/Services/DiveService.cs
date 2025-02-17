@@ -18,7 +18,6 @@ public class DiveService(
         await diveRepository.AddAsync(dive);
         return mapper.Map<DiveDto>(dive);
     }
-
     public async Task CreateDiveWithDetailAsync(DiveSaveDto diveSaveDto, int userId)
     {
         // Étape 1 : Sauvegarder la plongée principale
@@ -46,7 +45,7 @@ public class DiveService(
         await divePointService.AddManyDivePointAsync(divePoints);
 
         // Étape 3 : Ajouter les photos
-        var divePhotos = diveSaveDto.Photos.Select(p => new DivePhotoDto()
+        var divePhotos = diveSaveDto.Photos.Select(p => new DivePhotoSaveDto()
         {
             DiveId = diveId,
             FileName = p.FileName,

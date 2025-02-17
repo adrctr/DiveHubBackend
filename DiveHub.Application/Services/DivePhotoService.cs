@@ -14,9 +14,9 @@ public class DivePhotoService(IRepository<DivePhoto> divePhotoRepository, IMappe
         await divePhotoRepository.AddAsync(divePhoto);
     }
 
-    public async Task AddManyDivePhotoAsync(IEnumerable<DivePhotoDto> divePhotoDtos)
+    public async Task AddManyDivePhotoAsync(IEnumerable<DivePhotoSaveDto> divePhotoSaveDtos)
     {
-        var divePhotos = mapper.Map<IEnumerable<DivePhoto>>(divePhotoDtos);
+        var divePhotos = mapper.Map<IEnumerable<DivePhoto>>(divePhotoSaveDtos);
         // Ajouter tous les DivePhoto en une seule opération
         await divePhotoRepository.AddRangeAsync(divePhotos);
     }
