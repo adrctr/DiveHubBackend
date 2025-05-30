@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
     public static void AddDatabaseInitialization(this IServiceCollection services, string connectionString)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
-        // Ajoute le DbContext
+        // Ajoute le DbContext SqlLite
         services.AddDbContext<SQLiteDbContext>(options =>
             options.UseSqlite(connectionString));
 
