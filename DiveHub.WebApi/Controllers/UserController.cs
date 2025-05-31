@@ -1,45 +1,25 @@
-﻿using DiveHub.Application.Interfaces;
+﻿using System.Security.Claims;
+using DiveHub.Application.Interfaces;
 using DiveHub.Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DiveHub.WebApi.Controllers;
 
+[Authorize]
 [ApiController]
-[Route("api/[controller]")]
-public class UserController(IUserService userService) : ControllerBase
+[Route("api/users")]
+public class UsersController(IUserService userService) : ControllerBase
 {
-    [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] UserDto userDto)
+    [HttpPost("sync")]
+    public async Task<IActionResult> SyncUserFromProviderAsync()
     {
-        await userService.CreateUserAsync(userDto);
-        return Ok();
-    }
+        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        string? email = User.FindFirst(ClaimTypes.Email)?.Value;
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetUserById(int id)
-    {
-        var user = await userService.GetUserByIdAsync(id);
-        return user != null ? Ok(user) : NotFound();
-    }
+        if (userId == null) return Unauthorized(userId);
 
-    [HttpGet]
-    public async Task<IActionResult> GetAllUsers()
-    {
-        var users = await userService.GetAllUsersAsync();
-        return Ok(users);
-    }
-
-    [HttpPut]
-    public async Task<IActionResult> UpdateUser([FromBody] UserDto userDto)
-    {
-        await userService.UpdateUserAsync(userDto);
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser(int id)
-    {
-        await userService.DeleteUserAsync(id);
-        return NoContent();
+        UserDto user =  await userService.SyncUserFromProviderAsync(userId, email);
+        return Ok(user);
     }
 }

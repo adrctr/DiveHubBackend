@@ -4,10 +4,9 @@ namespace DiveHub.Application.Interfaces;
 
 public interface IDiveService
 {
-    Task<DiveDto> CreateDiveAsync(DiveSaveDto diveSaveDto, int userId);
-    Task CreateDiveWithDetailAsync(DiveSaveDto diveSaveDto, int userId);
-    Task<DiveDto?> GetDiveByIdAsync(int diveId);
+    Task<DiveDto> CreateDiveAsync(DiveSaveDto diveSaveDto, Guid userId);
+    Task<DiveDto?> GetDiveByIdAsync(Guid diveId);
     Task<IEnumerable<DiveDto>> GetAllDivesAsync();
     Task UpdateDiveAsync(DiveDto diveDto);
-    Task DeleteDiveAsync(int diveId);
+    Task DeleteDiveAsync(Guid diveId);
 }

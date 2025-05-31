@@ -1,4 +1,5 @@
 
+using System.Text;
 using DiveHub.Application.Interfaces;
 using DiveHub.Application.Mapping;
 using DiveHub.Application.Services;
@@ -6,7 +7,9 @@ using DiveHub.Core.Interfaces;
 using DiveHub.Infrastructure.Extensions;
 using DiveHub.Infrastructure.Persistence;
 using DiveHub.Infrastructure.repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,9 +37,29 @@ builder.Services.AddDatabaseInitialization("Data Source=DiveHubDB.db");
 // Ajouter les services de l'application
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDiveService, DiveService>();
-builder.Services.AddScoped<IDivePointService,DivePointService>();
-builder.Services.AddScoped<IDivePhotoService,DivePhotoService>();
 #endregion
+
+
+builder.Services.AddAuthentication(o =>   {
+        o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.IncludeErrorDetails = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("aygQR6Zqfvm4vZwg+B75bjfQCpzK71cXJxiS7Sb38O/WiaQbzm5WYHuOaExSXa1lAdTtuWoKQXNIma9sB7YgzQ==")),
+            ValidIssuer = "https://mgdklegnrjrzbnomclfs.supabase.co",
+            ValidAudience ="authenticated"
+        };
+    });
 
 #region AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -62,6 +85,7 @@ app.UseCors("AllowSpecificOrigins");
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

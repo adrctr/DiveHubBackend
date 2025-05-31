@@ -28,7 +28,7 @@ public class DatabaseInitializer(SQLiteDbContext context)
     {
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated(); // Crée la base de données et les tables si elles n'existent pas
-        context.Users.Add(new User()
+        /*context.Users.Add(new User()
         {
             UserId = 1,
             Email = "adr.couturier@gmail.com",
@@ -44,27 +44,28 @@ public class DatabaseInitializer(SQLiteDbContext context)
             DiveDate = DateTime.Now,
             DiveName = "A coral reef dive",
             Description = "Awesome colorfull coral reef dive",
-            DivePhotos = new List<DivePhoto>()
-            {
-                new DivePhoto
-                {
-                    DiveId = 1,
-                    CreatedAt = DateTime.Now,
-                    FileName = "test.jpg",
-                    Url = "https://test.com/test.jpg"
-                }
-            },
-            DivePoints = new List<DivePoint>()
-            {
-                new DivePoint
-                {
-                    DiveId = 1,
-                    Description = "secret dive",
-                    Longitude = 102.733330,
-                    Latitude = 5.916667
-                    }
-        }
+            // DivePhotos = new List<DivePhoto>()
+            // {
+            //     new DivePhoto
+            //     {
+            //         DiveId = 1,
+            //         CreatedAt = DateTime.Now,
+            //         FileName = "test.jpg",
+            //         Url = "https://test.com/test.jpg"
+            //     }
+            // },
+            // DivePoints = new List<DivePoint>()
+            // {
+            //     new DivePoint
+            //     {
+            //         DiveId = 1,
+            //         Description = "secret dive",
+            //         Longitude = 102.733330,
+            //         Latitude = 5.916667
+            //     }
+            // }
         });
+        */
 
         context.SaveChanges();
     }

@@ -12,21 +12,15 @@ public class DiveController(IDiveService diveService) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType<DiveDto>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> CreateDive([FromBody] DiveSaveDto diveDto)
-    {
-        DiveDto diveCreated = await diveService.CreateDiveAsync(diveDto, 1); //TODO: Change User ID 
-        return Ok(diveCreated);
-    }
+   // public async Task<IActionResult> CreateDive([FromBody] DiveSaveDto diveDto)
+    //{
+       // DiveDto diveCreated = await diveService.CreateDiveAsync(diveDto, 1); //TODO: Change User ID 
+       // return Ok(diveCreated);
+    //}
     
-    [HttpPost("withDetails")]
-    public async Task<IActionResult> CreateDiveWithPoints([FromBody] DiveSaveDto diveDto, int userId)
-    {
-        await diveService.CreateDiveWithDetailAsync(diveDto, userId); //TODO: Change User ID  
-        return Ok();
-    }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetDiveById(int id)
+    public async Task<IActionResult> GetDiveById(Guid id)
     {
         var dive = await diveService.GetDiveByIdAsync(id);
         return dive != null ? Ok(dive) : NotFound();
@@ -57,7 +51,7 @@ public class DiveController(IDiveService diveService) : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteDive(int id)
+    public async Task<IActionResult> DeleteDive(Guid id)
     {
         await diveService.DeleteDiveAsync(id);
         return NoContent();

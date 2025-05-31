@@ -7,36 +7,21 @@ namespace DiveHub.Application.Services;
 
 public class UserService(IRepository<User> userRepository, IMapper mapper) : IUserService
 {
-    public async Task CreateUserAsync(UserDto userDto)
+    public async Task<UserDto> SyncUserFromProviderAsync(string userId, string? email)
     {
-        var user = mapper.Map<User>(userDto);
-        await userRepository.AddAsync(user);
-    }
-
-    public async Task<UserDto?> GetUserByIdAsync(int userId)
-    {
-        var user = await userRepository.GetByIdAsync(userId);
-        return mapper.Map<UserDto>(user);
-    }
-
-    public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
-    {
-        var users = await userRepository.GetAllAsync();
-        return mapper.Map<IEnumerable<UserDto>>(users);
-    }
-
-    public async Task UpdateUserAsync(UserDto userDto)
-    {
-        var user = await userRepository.GetByIdAsync(userDto.UserId);
-        if (user != null)
+        Guid guid = Guid.Parse(userId);
+        var user = await userRepository.GetByIdAsync(guid);
+        if (user == null)
         {
-            mapper.Map(userDto, user);
-            await userRepository.UpdateAsync(user);
+            user = new User
+            {
+                UserId = guid,
+                Email = email,
+                CreatedAt = DateTime.UtcNow,
+            };
+            await userRepository.AddAsync(user);
         }
-    }
 
-    public async Task DeleteUserAsync(int userId)
-    {
-        await userRepository.DeleteAsync(userId);
+        return mapper.Map<UserDto>(user);
     }
 }
