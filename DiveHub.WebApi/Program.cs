@@ -40,26 +40,29 @@ builder.Services.AddScoped<IDiveService, DiveService>();
 #endregion
 
 
-builder.Services.AddAuthentication(o =>   {
-        o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.SaveToken = true;
-        options.IncludeErrorDetails = true;
+        // ← Point essentiel : Authority pour JWKS
+        options.Authority = "https://mgdklegnrjrzbnomclfs.supabase.co/auth/v1";
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = false,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("aygQR6Zqfvm4vZwg+B75bjfQCpzK71cXJxiS7Sb38O/WiaQbzm5WYHuOaExSXa1lAdTtuWoKQXNIma9sB7YgzQ==")),
+            ValidateIssuer = true,
             ValidIssuer = "https://mgdklegnrjrzbnomclfs.supabase.co",
-            ValidAudience ="authenticated"
+
+            ValidateAudience = false, // ← désactivé car Supabase n’envoie pas d'audience
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true
         };
+
+        // ← Permet les détails d'erreurs (utile pour debug)
+        options.IncludeErrorDetails = true;
     });
+
+builder.Services
+    .AddAuthorization();
 
 #region AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
