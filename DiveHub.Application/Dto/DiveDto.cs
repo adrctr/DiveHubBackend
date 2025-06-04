@@ -4,7 +4,7 @@ namespace DiveHub.Application.Dto;
 
 public partial class DiveDto
 {
-    public Guid DiveId { get; set; }
+    public int DiveId { get; set; }
     public string DiveName { get; set; } = string.Empty;
     public DateTime? DiveDate { get; set; }
     public string? Description { get; set; }
@@ -21,7 +21,7 @@ public partial class DiveSaveDto
 
 public partial class DiveDetailDto
 {
-    public Guid DiveId { get; set; }
+    public int DiveId { get; set; }
     public string DiveName { get; set; } = string.Empty;
     public DateTime? DiveDate { get; set; }
     public string? Description { get; set; }

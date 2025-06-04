@@ -9,7 +9,7 @@ public class DiveService(
     IDiveRepository diveRepository,
     IMapper mapper) : IDiveService
 {
-    public async Task<DiveDto> CreateDiveAsync(DiveSaveDto diveSaveDto, Guid userId)
+    public async Task<DiveDto> CreateDiveAsync(DiveSaveDto diveSaveDto, int userId)
     {
         Dive dive = mapper.Map<Dive>(diveSaveDto);
         dive.UserId = userId;
@@ -17,7 +17,7 @@ public class DiveService(
         return mapper.Map<DiveDto>(dive);
     }
     
-    public async Task<DiveDto?> GetDiveByIdAsync(Guid diveId)
+    public async Task<DiveDto?> GetDiveByIdAsync(int diveId)
     {
         var dive = await diveRepository.GetByIdAsync(diveId);
         return mapper.Map<DiveDto?>(dive);
@@ -39,7 +39,7 @@ public class DiveService(
         }
     }
 
-    public async Task DeleteDiveAsync(Guid diveId)
+    public async Task DeleteDiveAsync(int diveId)
     {
         await diveRepository.DeleteAsync(diveId);
     }

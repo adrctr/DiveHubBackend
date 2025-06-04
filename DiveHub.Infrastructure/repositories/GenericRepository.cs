@@ -38,7 +38,7 @@ public class GenericRepository<T>(SQLiteDbContext context) : IRepository<T>
     /// </summary>
     /// <param name="id">L'identifiant de l'entité.</param>
     /// <returns>L'entité correspondante ou null si elle n'existe pas.</returns>
-    public async Task<T?> GetByIdAsync(Guid id) => await context.Set<T>().FindAsync(id);
+    public async Task<T?> GetByIdAsync(int id) => await context.Set<T>().FindAsync(id);
 
     /// <summary>
     /// Récupère toutes les entités de ce type dans la base de données.
@@ -60,7 +60,7 @@ public class GenericRepository<T>(SQLiteDbContext context) : IRepository<T>
     /// Supprime une entité par son identifiant.
     /// </summary>
     /// <param name="id">L'identifiant de l'entité à supprimer.</param>
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(int id)
     {
         var entity = await GetByIdAsync(id);
         if (entity != null)
