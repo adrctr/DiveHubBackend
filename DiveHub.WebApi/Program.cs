@@ -51,7 +51,7 @@ if (app.Environment.IsDevelopment())
         initializer.Initialize(); // Appelle la méthode pour créer la base de données
     }
     app.MapOpenApi();
-    app.UseCors(options => options.WithOrigins("http://localhost:5228").AllowAnyMethod().AllowAnyHeader());
+    app.UseCors(options => options.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader());
 }
 
 app.UseCors("AllowSpecificOrigins");

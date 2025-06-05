@@ -3,6 +3,7 @@ using DiveHub.Application.Dto;
 using DiveHub.Application.Interfaces;
 using DiveHub.Core.Entities;
 using DiveHub.Infrastructure.repositories;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 namespace DiveHub.Application.Services;
 
 public class DiveService(
@@ -34,6 +35,7 @@ public class DiveService(
         var dive = await diveRepository.GetByIdAsync(diveDto.DiveId);
         if (dive != null)
         {
+            dive = mapper.Map<Dive>(diveDto);
             await diveRepository.UpdateAsync(dive);
         }
     }

@@ -42,6 +42,7 @@ public class DatabaseInitializer(SQLiteDbContext context)
             DiveId = 1,
             UserId = 1,
             DiveDate = DateTime.Now,
+            Depth = 90
             DiveName = "A coral reef dive",
             Description = "Awesome colorfull coral reef dive",
             // DivePhotos = new List<DivePhoto>()

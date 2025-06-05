@@ -79,4 +79,34 @@ public class GenericRepository<T>(SQLiteDbContext context) : IRepository<T>
     {
         return await context.Set<T>().Where(predicate).ToListAsync();
     }
+
+    Task IRepository<T>.AddAsync(T entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task IRepository<T>.AddRangeAsync(IEnumerable<T> entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<T?> IRepository<T>.GetByIdAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<IEnumerable<T>> IRepository<T>.GetAllAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task IRepository<T>.DeleteAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<IEnumerable<T>> IRepository<T>.FindAsync(Expression<Func<T, bool>> predicate)
+    {
+        throw new NotImplementedException();
+    }
 }

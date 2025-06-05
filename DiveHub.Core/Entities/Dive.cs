@@ -6,7 +6,6 @@ public class Dive
     public int UserId { get; set; }
     public string DiveName { get; set; } = null!;
     public DateTime? DiveDate { get; set; }
-    
     public float Depth { get; set; }
     public string? Description { get; set; }
     // public ICollection<DivePoint> DivePoints { get; set; } = new List<DivePoint>();
