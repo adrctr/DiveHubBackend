@@ -34,7 +34,6 @@ public class DiveService(
         var dive = await diveRepository.GetByIdAsync(diveDto.DiveId);
         if (dive != null)
         {
-            mapper.Map(diveDto, dive);
             await diveRepository.UpdateAsync(dive);
         }
     }
