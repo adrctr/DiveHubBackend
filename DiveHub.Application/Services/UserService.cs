@@ -7,15 +7,14 @@ namespace DiveHub.Application.Services;
 
 public class UserService(IRepository<User> userRepository, IMapper mapper) : IUserService
 {
-    public async Task<UserDto> SyncUserFromProviderAsync(string userId, string? email)
+    public async Task<UserDto> SyncUserFromProviderAsync(int userId, string? email)
     {
-        Guid guid = Guid.Parse(userId);
-        var user = await userRepository.GetByIdAsync(guid);
+        var user = await userRepository.GetByIdAsync(userId);
         if (user == null)
         {
             user = new User
             {
-                UserId = guid,
+                UserId = userId,
                 Email = email,
                 CreatedAt = DateTime.UtcNow,
             };

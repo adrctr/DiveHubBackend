@@ -6,9 +6,9 @@ public interface IRepository<T>
 {
     Task AddAsync(T entity);
     Task AddRangeAsync(IEnumerable<T> entity);
-    Task<T?> GetByIdAsync(Guid id);
+    Task<T?> GetByIdAsync(int id);
     Task<IEnumerable<T>> GetAllAsync();
     Task UpdateAsync(T entity);
-    Task DeleteAsync(Guid id);
+    Task DeleteAsync(int id);
     Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
 }

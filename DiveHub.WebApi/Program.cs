@@ -1,5 +1,3 @@
-
-using System.Text;
 using DiveHub.Application.Interfaces;
 using DiveHub.Application.Mapping;
 using DiveHub.Application.Services;
@@ -7,9 +5,7 @@ using DiveHub.Core.Interfaces;
 using DiveHub.Infrastructure.Extensions;
 using DiveHub.Infrastructure.Persistence;
 using DiveHub.Infrastructure.repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,31 +35,6 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDiveService, DiveService>();
 #endregion
 
-
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        // ← Point essentiel : Authority pour JWKS
-        options.Authority = "https://mgdklegnrjrzbnomclfs.supabase.co/auth/v1";
-
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = "https://mgdklegnrjrzbnomclfs.supabase.co",
-
-            ValidateAudience = false, // ← désactivé car Supabase n’envoie pas d'audience
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true
-        };
-
-        // ← Permet les détails d'erreurs (utile pour debug)
-        options.IncludeErrorDetails = true;
-    });
-
-builder.Services
-    .AddAuthorization();
-
 #region AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 #endregion
@@ -87,9 +58,6 @@ app.UseCors("AllowSpecificOrigins");
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 

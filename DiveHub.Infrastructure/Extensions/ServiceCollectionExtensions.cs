@@ -28,7 +28,7 @@ public class DatabaseInitializer(SQLiteDbContext context)
     {
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated(); // Crée la base de données et les tables si elles n'existent pas
-        /*context.Users.Add(new User()
+        context.Users.Add(new User()
         {
             UserId = 1,
             Email = "adr.couturier@gmail.com",
@@ -65,8 +65,7 @@ public class DatabaseInitializer(SQLiteDbContext context)
             //     }
             // }
         });
-        */
-
+        
         context.SaveChanges();
     }
 }

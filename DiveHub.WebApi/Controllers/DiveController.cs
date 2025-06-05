@@ -12,15 +12,14 @@ public class DiveController(IDiveService diveService) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType<DiveDto>(StatusCodes.Status200OK)]
-   // public async Task<IActionResult> CreateDive([FromBody] DiveSaveDto diveDto)
-    //{
-       // DiveDto diveCreated = await diveService.CreateDiveAsync(diveDto, 1); //TODO: Change User ID 
-       // return Ok(diveCreated);
-    //}
-    
-
+    public async Task<IActionResult> CreateDive([FromBody] DiveSaveDto diveDto)
+    {
+        DiveDto diveCreated = await diveService.CreateDiveAsync(diveDto, 1); //TODO: Change User ID 
+        return Ok(diveCreated);
+    }
+   
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetDiveById(Guid id)
+    public async Task<IActionResult> GetDiveById(int id)
     {
         var dive = await diveService.GetDiveByIdAsync(id);
         return dive != null ? Ok(dive) : NotFound();
@@ -34,14 +33,6 @@ public class DiveController(IDiveService diveService) : ControllerBase
         return Ok(dives);
     }
     
-    [HttpGet("ByUserId/{userId}")]
-    [ProducesResponseType(typeof(IEnumerable<DiveDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetByUserId(int userId)
-    {
-        // var dives = await diveService.GetDivesByUserIdAsync();
-        return Ok();
-    }
-
     [HttpPut]
     [ProducesResponseType(typeof(DiveDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateDive([FromBody] DiveDto diveDto)
@@ -51,7 +42,7 @@ public class DiveController(IDiveService diveService) : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteDive(Guid id)
+    public async Task<IActionResult> DeleteDive(int id)
     {
         await diveService.DeleteDiveAsync(id);
         return NoContent();
