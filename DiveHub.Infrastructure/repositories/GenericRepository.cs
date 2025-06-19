@@ -69,7 +69,7 @@ public class GenericRepository<T>(SQLiteDbContext context) : IRepository<T>
             await context.SaveChangesAsync();
         }
     }
-    
+
     /// <summary>
     /// Récupère les entités qui satisfont un prédicat donné.
     /// </summary>
@@ -78,26 +78,5 @@ public class GenericRepository<T>(SQLiteDbContext context) : IRepository<T>
     public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
     {
         return await context.Set<T>().Where(predicate).ToListAsync();
-    }
-
-
-    Task IRepository<T>.AddRangeAsync(IEnumerable<T> entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<IEnumerable<T>> IRepository<T>.GetAllAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    Task IRepository<T>.DeleteAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<IEnumerable<T>> IRepository<T>.FindAsync(Expression<Func<T, bool>> predicate)
-    {
-        throw new NotImplementedException();
     }
 }
