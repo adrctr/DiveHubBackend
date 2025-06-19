@@ -52,7 +52,7 @@ public class GenericRepository<T>(SQLiteDbContext context) : IRepository<T>
     /// <param name="entity">L'entité à mettre à jour.</param>
     public async Task UpdateAsync(T entity)
     {
-        context.Set<T>().Update(entity);
+        context.Set<T>().Attach(entity);
         await context.SaveChangesAsync();
     }
 
@@ -80,17 +80,8 @@ public class GenericRepository<T>(SQLiteDbContext context) : IRepository<T>
         return await context.Set<T>().Where(predicate).ToListAsync();
     }
 
-    Task IRepository<T>.AddAsync(T entity)
-    {
-        throw new NotImplementedException();
-    }
 
     Task IRepository<T>.AddRangeAsync(IEnumerable<T> entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<T?> IRepository<T>.GetByIdAsync(int id)
     {
         throw new NotImplementedException();
     }

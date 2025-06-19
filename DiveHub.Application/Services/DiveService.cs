@@ -32,12 +32,12 @@ public class DiveService(
 
     public async Task UpdateDiveAsync(DiveDto diveDto)
     {
-        var dive = await diveRepository.GetByIdAsync(diveDto.DiveId);
-        if (dive != null)
-        {
-            dive = mapper.Map<Dive>(diveDto);
-            await diveRepository.UpdateAsync(dive);
-        }
+        var existingDive = await diveRepository.GetByIdAsync(diveDto.DiveId);
+        if (existingDive is null)
+            throw new InvalidOperationException($"La plongée avec l'ID {diveDto.DiveId} n'existe pas.");
+
+        mapper.Map(diveDto, existingDive);
+        await diveRepository.UpdateAsync(existingDive);
     }
 
     public async Task DeleteDiveAsync(int diveId)
