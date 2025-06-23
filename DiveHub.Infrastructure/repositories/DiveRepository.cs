@@ -12,6 +12,8 @@ public interface IDiveRepository : IRepository<Dive>
 
 public class DiveRepository(SQLiteDbContext context) : GenericRepository<Dive>(context), IDiveRepository
 {
+    private readonly SQLiteDbContext _context = context;
+
     /// <summary>
     /// Retourne une liste de dives avec ses détails 
     /// </summary>
@@ -19,9 +21,7 @@ public class DiveRepository(SQLiteDbContext context) : GenericRepository<Dive>(c
     /// <returns></returns>
     public async Task<IEnumerable<Dive>> GetDivesWihDetails()
     {
-        return await context.Dives
-            .Include(d => d.DivePhotos)
-            .Include(d => d.DivePoints)
-            .ToListAsync();
+        return await _context.Dives
+                   .ToListAsync();
     }
 }

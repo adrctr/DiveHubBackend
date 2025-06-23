@@ -17,14 +17,7 @@ public class DiveController(IDiveService diveService) : ControllerBase
         DiveDto diveCreated = await diveService.CreateDiveAsync(diveDto, 1); //TODO: Change User ID 
         return Ok(diveCreated);
     }
-    
-    [HttpPost("withDetails")]
-    public async Task<IActionResult> CreateDiveWithPoints([FromBody] DiveSaveDto diveDto, int userId)
-    {
-        await diveService.CreateDiveWithDetailAsync(diveDto, userId); //TODO: Change User ID  
-        return Ok();
-    }
-
+   
     [HttpGet("{id}")]
     public async Task<IActionResult> GetDiveById(int id)
     {
@@ -40,14 +33,6 @@ public class DiveController(IDiveService diveService) : ControllerBase
         return Ok(dives);
     }
     
-    [HttpGet("ByUserId/{userId}")]
-    [ProducesResponseType(typeof(IEnumerable<DiveDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetByUserId(int userId)
-    {
-        // var dives = await diveService.GetDivesByUserIdAsync();
-        return Ok();
-    }
-
     [HttpPut]
     [ProducesResponseType(typeof(DiveDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateDive([FromBody] DiveDto diveDto)

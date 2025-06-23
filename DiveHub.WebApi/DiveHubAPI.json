@@ -6,137 +6,13 @@
   },
   "servers": [
     {
+      "url": "https://localhost:7186"
+    },
+    {
       "url": "http://localhost:5109"
     }
   ],
   "paths": {
-    "/api/DivePhoto": {
-      "post": {
-        "tags": [
-          "DivePhoto"
-        ],
-        "requestBody": {
-          "content": {
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "type": "object",
-                "allOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "diveId": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "files": {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/IFormFile"
-                        }
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "DivePhoto"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "DivePhoto"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DivePhotoDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DivePhotoDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/DivePhotoDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/DivePhoto/{id}": {
-      "get": {
-        "tags": [
-          "DivePhoto"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "DivePhoto"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Dive": {
       "post": {
         "tags": [
@@ -233,48 +109,6 @@
         }
       }
     },
-    "/api/Dive/withDetails": {
-      "post": {
-        "tags": [
-          "Dive"
-        ],
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DiveSaveDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DiveSaveDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/DiveSaveDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/Dive/{id}": {
       "get": {
         "tags": [
@@ -356,55 +190,6 @@
           }
         }
       }
-    },
-    "/api/Dive/ByUserId/{userId}": {
-      "get": {
-        "tags": [
-          "Dive"
-        ],
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DiveDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DiveDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DiveDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -426,30 +211,6 @@
           },
           "description": {
             "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "DivePhotoDto": {
-        "type": "object",
-        "properties": {
-          "divePhotoId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "diveId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "fileName": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
             "nullable": true
           }
         }
@@ -519,17 +280,10 @@
             "nullable": true
           }
         }
-      },
-      "IFormFile": {
-        "type": "string",
-        "format": "binary"
       }
     }
   },
   "tags": [
-    {
-      "name": "DivePhoto"
-    },
     {
       "name": "Dive"
     }

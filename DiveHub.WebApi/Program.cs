@@ -1,4 +1,3 @@
-
 using DiveHub.Application.Interfaces;
 using DiveHub.Application.Mapping;
 using DiveHub.Application.Services;
@@ -14,8 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+
+// Swagger
+builder.Services.AddSwaggerGen();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -34,8 +36,6 @@ builder.Services.AddDatabaseInitialization("Data Source=DiveHubDB.db");
 // Ajouter les services de l'application
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDiveService, DiveService>();
-builder.Services.AddScoped<IDivePointService,DivePointService>();
-builder.Services.AddScoped<IDivePhotoService,DivePhotoService>();
 #endregion
 
 #region AutoMapper
@@ -47,6 +47,14 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "DiveHub.WebApi v1");
+    });
+    app.UsePathBase("/swagger");
+
+
     // Crée la base de données au démarrage si elle n'existe pas
     using (var scope = app.Services.CreateScope())
     {
@@ -54,15 +62,13 @@ if (app.Environment.IsDevelopment())
         initializer.Initialize(); // Appelle la méthode pour créer la base de données
     }
     app.MapOpenApi();
-    app.UseCors(options => options.WithOrigins("http://localhost:5228").AllowAnyMethod().AllowAnyHeader());
+    app.UseCors(options => options.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader());
 }
 
 app.UseCors("AllowSpecificOrigins");
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 
