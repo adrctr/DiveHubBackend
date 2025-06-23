@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using DiveHub.Application.Dto;
-using DiveHub.Application.Interfaces;
 using DiveHub.Application.Services;
 using DiveHub.Core.Entities;
-using DiveHub.Core.Interfaces;
 using DiveHub.Infrastructure.repositories;
 using Moq;
 
