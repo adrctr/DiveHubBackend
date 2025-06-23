@@ -32,3 +32,4 @@ Desktop.ini
 project.lock.json
 project.fragment.lock.json
 artifacts/
+/DiveHub.WebApi/DiveHubDB.db
