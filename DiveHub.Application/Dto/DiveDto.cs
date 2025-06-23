@@ -7,6 +7,8 @@ public partial class DiveDto
     public int DiveId { get; set; }
     public string DiveName { get; set; } = string.Empty;
     public float Depth { get; set; }
+    public int Duration { get; set; }
+
     public DateTime? DiveDate { get; set; }
     public string? Description { get; set; }
 }
@@ -14,8 +16,10 @@ public partial class DiveDto
 public partial class DiveSaveDto
 {
     public string DiveName { get; set; } = string.Empty;
-    public DateTime? DiveDate { get; set; }
     public float Depth { get; set; }
+    public int Duration { get; set; }
+    public DateTime? DiveDate { get; set; }
+
     public string? Description { get; set; }
     public List<DiveSavePointDto> Points { get; set; } = [];
     public List<DivePhotoSaveDto> Photos { get; set; } = [];
