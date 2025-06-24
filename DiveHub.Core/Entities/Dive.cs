@@ -10,7 +10,9 @@ public class Dive
     public int Duration { get; set; }
 
     public string? Description { get; set; }
-    // public ICollection<DivePoint> DivePoints { get; set; } = new List<DivePoint>();
+   
+    public ICollection<Equipment> Equipments { get; set; } = new List<Equipment>();
+
     // public ICollection<DivePhoto> DivePhotos { get; set; } = new List<DivePhoto>();
 
 }
