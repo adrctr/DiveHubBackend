@@ -28,6 +28,7 @@ builder.Services.AddDbContext<SQLiteDbContext>(options =>
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IDiveRepository, DiveRepository>();
+builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
 
 builder.Services.AddDatabaseInitialization("Data Source=DiveHubDB.db");
 #endregion

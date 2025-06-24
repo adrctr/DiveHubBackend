@@ -3,7 +3,6 @@ using DiveHub.Application.Dto;
 using DiveHub.Application.Interfaces;
 using DiveHub.Core.Entities;
 using DiveHub.Infrastructure.repositories;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 namespace DiveHub.Application.Services;
 
 public class DiveService(

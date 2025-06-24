@@ -21,7 +21,7 @@ public class DiveRepository(SQLiteDbContext context) : GenericRepository<Dive>(c
     /// <returns></returns>
     public async Task<IEnumerable<Dive>> GetDivesWihDetails()
     {
-        return await _context.Dives
+        return await _context.Dives.Include(d => d.Equipments)
                    .ToListAsync();
     }
 }
