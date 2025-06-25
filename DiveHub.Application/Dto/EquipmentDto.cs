@@ -1,5 +1,4 @@
-﻿using DiveHub.Core.Entities;
-
+﻿
 namespace DiveHub.Application.Dto;
 
 public partial class EquipmentDto
@@ -12,5 +11,4 @@ public partial class EquipmentDto
 public partial class EquipmentSaveDto
 {
     public string EquipmentName { get; set; } = string.Empty;
-
 }
