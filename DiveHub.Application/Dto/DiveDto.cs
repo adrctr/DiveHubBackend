@@ -22,11 +22,8 @@ public partial class DiveSaveDto
     public float Depth { get; set; }
     public int Duration { get; set; }
     public DateTime? DiveDate { get; set; }
-
     public string? Description { get; set; }
-
     public List<EquipmentDto> Equipments { get; set; } = [];
-
     public List<DiveSavePointDto> Points { get; set; } = [];
     public List<DivePhotoSaveDto> Photos { get; set; } = [];
 }
