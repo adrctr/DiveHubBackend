@@ -45,7 +45,25 @@ public class DatabaseInitializer(SQLiteDbContext context)
             Depth = 90,
             DiveName = "A coral reef dive",
             Description = "Awesome colorfull coral reef dive",
-            // DivePhotos = new List<DivePhoto>()
+            Equipments = new List<Equipment>()
+            {
+                new() {
+                    EquipmentId =1,
+                    EquipmentName = "Ordinateur de plongée"
+                },
+                new() {
+                    EquipmentId =2,
+                    EquipmentName = "Gopro"
+                }
+            }
+
+
+
+            //({
+            //    EquipmentId = 1,
+            //    EquipmentName = "Ordinateur de plongée"
+            //});
+            //// DivePhotos = new List<DivePhoto>()
             // {
             //     new DivePhoto
             //     {
