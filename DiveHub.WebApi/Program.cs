@@ -32,11 +32,12 @@ builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
 
 builder.Services.AddDatabaseInitialization("Data Source=DiveHubDB.db");
 #endregion
-
 #region services
 // Ajouter les services de l'application
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDiveService, DiveService>();
+builder.Services.AddScoped<IEquipmentService, EquipmentService>();
+
 #endregion
 
 #region AutoMapper
