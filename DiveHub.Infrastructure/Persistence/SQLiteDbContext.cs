@@ -6,7 +6,7 @@ namespace DiveHub.Infrastructure.Persistence;
 public class SQLiteDbContext(DbContextOptions<SQLiteDbContext> options) : DbContext(options)
 {
     public DbSet<User> Users { get; set; } = null!;
-    public DbSet<Dive> Dives { get; set; } = null!;
+    public DbSet<Dive?> Dives { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

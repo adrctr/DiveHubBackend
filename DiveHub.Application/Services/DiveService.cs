@@ -31,11 +31,38 @@ public class DiveService(
 
     public async Task UpdateDiveAsync(DiveDto diveDto)
     {
-        var existingDive = await diveRepository.GetByIdAsync(diveDto.DiveId);
+        var existingDive = await diveRepository.GetDiveByIdAsync(diveDto.DiveId);
         if (existingDive is null)
             throw new InvalidOperationException($"La plongée avec l'ID {diveDto.DiveId} n'existe pas.");
 
-        mapper.Map(diveDto, existingDive);
+        // Mise à jour des champs simples
+        existingDive.DiveName = diveDto.DiveName;
+        existingDive.DiveDate = diveDto.DiveDate;
+        existingDive.Description = diveDto.Description;
+        existingDive.Depth = diveDto.Depth;
+        existingDive.Duration = diveDto.Duration;
+
+        // Extraire les EquipmentIds du DTO
+        var equipmentIds = diveDto.Equipments.Select(e => e.EquipmentId).ToList();
+
+        // Supprimer les équipements non sélectionnés
+        foreach (var equipment in existingDive.Equipments.ToList())
+        {
+            if (!equipmentIds.Contains(equipment.EquipmentId))
+            {
+                existingDive.Equipments.Remove(equipment);
+            }
+        }
+
+        // Ajouter les nouveaux équipements s'ils ne sont pas déjà liés
+        foreach (var equipmentId in equipmentIds)
+        {
+            if (!existingDive.Equipments.Any(e => e.EquipmentId == equipmentId))
+            {
+                var equipment = new Equipment { EquipmentId = equipmentId };
+                existingDive.Equipments.Add(equipment);
+            }
+        }
         await diveRepository.UpdateAsync(existingDive);
     }
 
