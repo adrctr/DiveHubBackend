@@ -28,7 +28,7 @@ public class DiveRepository(SQLiteDbContext context) : GenericRepository<Dive>(c
 
     public async Task<Dive?> GetDiveByIdAsync(int diveId)
     {
-        return await _dbcontext.Dives
+        return await _dbcontext.Dives.Include(d => d.Equipments)
             .FirstOrDefaultAsync(d => d.DiveId == diveId);
     }
 }

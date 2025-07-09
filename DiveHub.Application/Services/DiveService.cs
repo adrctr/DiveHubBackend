@@ -68,26 +68,22 @@ public class DiveService(
         existingDive.Duration = diveDto.Duration;
 
         // Extraire les EquipmentIds du DTO
-        var equipmentIds = diveDto.Equipments.Select(e => e.EquipmentId).ToList();
+        var newEquipmentIds = diveDto.Equipments.Select(e => e.EquipmentId).Distinct().ToList();
 
-        // Supprimer les équipements non sélectionnés
-        foreach (var equipment in existingDive.Equipments.ToList())
+        // Charger les entités Equipment existantes correspondant aux IDs
+        var equipmentsFromDb = await equipmentRepository.GetEquipmentsByIdsAsync(newEquipmentIds);
+
+        // Vérification que tous les IDs existent réellement
+        if (equipmentsFromDb.Count != newEquipmentIds.Count)
+            throw new InvalidOperationException("Un ou plusieurs équipements sont introuvables.");
+
+        // Mise à jour de la relation Many-to-Many : remplacement complet
+        existingDive.Equipments.Clear();
+        foreach (var equipment in equipmentsFromDb)
         {
-            if (!equipmentIds.Contains(equipment.EquipmentId))
-            {
-                existingDive.Equipments.Remove(equipment);
-            }
+            existingDive.Equipments.Add(equipment);
         }
 
-        // Ajouter les nouveaux équipements s'ils ne sont pas déjà liés
-        foreach (var equipmentId in equipmentIds)
-        {
-            if (!existingDive.Equipments.Any(e => e.EquipmentId == equipmentId))
-            {
-                var equipment = new Equipment { EquipmentId = equipmentId };
-                existingDive.Equipments.Add(equipment);
-            }
-        }
         await diveRepository.UpdateAsync(existingDive);
     }
 

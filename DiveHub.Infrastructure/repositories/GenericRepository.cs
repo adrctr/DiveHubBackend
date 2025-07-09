@@ -52,7 +52,7 @@ public class GenericRepository<T>(SQLiteDbContext context) : IRepository<T>
     /// <param name="entity">L'entité à mettre à jour.</param>
     public async Task UpdateAsync(T entity)
     {
-        context.Set<T>().Attach(entity);
+        context.Set<T>().Update(entity);
         await context.SaveChangesAsync();
     }
 
