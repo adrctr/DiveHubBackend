@@ -17,6 +17,21 @@ namespace DiveHub.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.5");
 
+            modelBuilder.Entity("DiveEquipment", b =>
+                {
+                    b.Property<int>("DivesDiveId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EquipmentsEquipmentId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DivesDiveId", "EquipmentsEquipmentId");
+
+                    b.HasIndex("EquipmentsEquipmentId");
+
+                    b.ToTable("DiveEquipment");
+                });
+
             modelBuilder.Entity("DiveHub.Core.Entities.Dive", b =>
                 {
                     b.Property<int>("DiveId")
@@ -55,18 +70,13 @@ namespace DiveHub.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("DiveId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("EquipmentName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("EquipmentId");
 
-                    b.HasIndex("DiveId");
-
-                    b.ToTable("Equipment");
+                    b.ToTable("Equipments");
                 });
 
             modelBuilder.Entity("DiveHub.Core.Entities.User", b =>
@@ -94,6 +104,21 @@ namespace DiveHub.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("DiveEquipment", b =>
+                {
+                    b.HasOne("DiveHub.Core.Entities.Dive", null)
+                        .WithMany()
+                        .HasForeignKey("DivesDiveId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DiveHub.Core.Entities.Equipment", null)
+                        .WithMany()
+                        .HasForeignKey("EquipmentsEquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("DiveHub.Core.Entities.Dive", b =>
                 {
                     b.HasOne("DiveHub.Core.Entities.User", null)
@@ -101,18 +126,6 @@ namespace DiveHub.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("DiveHub.Core.Entities.Equipment", b =>
-                {
-                    b.HasOne("DiveHub.Core.Entities.Dive", null)
-                        .WithMany("Equipments")
-                        .HasForeignKey("DiveId");
-                });
-
-            modelBuilder.Entity("DiveHub.Core.Entities.Dive", b =>
-                {
-                    b.Navigation("Equipments");
                 });
 
             modelBuilder.Entity("DiveHub.Core.Entities.User", b =>

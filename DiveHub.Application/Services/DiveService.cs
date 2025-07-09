@@ -3,17 +3,42 @@ using DiveHub.Application.Dto;
 using DiveHub.Application.Interfaces;
 using DiveHub.Core.Entities;
 using DiveHub.Infrastructure.repositories;
+using Microsoft.EntityFrameworkCore;
 namespace DiveHub.Application.Services;
 
 public class DiveService(
     IDiveRepository diveRepository,
+    IEquipmentRepository equipmentRepository,
     IMapper mapper) : IDiveService
 {
     public async Task<DiveDto> CreateDiveAsync(DiveSaveDto diveSaveDto, int userId)
     {
+        // Mapper uniquement les propriétés simples (ne pas mapper Equipments ici !)
         Dive dive = mapper.Map<Dive>(diveSaveDto);
         dive.UserId = userId;
+
+        // Récupérer les EquipmentId sélectionnés
+        var equipmentIds = diveSaveDto.Equipments
+            .Select(e => e.EquipmentId)
+            .Distinct()
+            .ToList();
+
+        if (equipmentIds.Any())
+        {
+            // Charger les équipements existants depuis la base de données
+            var equipments = await equipmentRepository.GetEquipmentsByIdsAsync(equipmentIds);
+
+            // Vérifier qu'ils existent tous (sécurité)
+            if (equipments.Count != equipmentIds.Count)
+                throw new InvalidOperationException("Un ou plusieurs équipements sélectionnés n'existent pas.");
+
+            // Associer les équipements existants à la plongée
+            dive.Equipments = equipments;
+        }
+
+        // Sauvegarder
         await diveRepository.AddAsync(dive);
+
         return mapper.Map<DiveDto>(dive);
     }
     

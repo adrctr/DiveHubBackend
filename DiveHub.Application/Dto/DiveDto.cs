@@ -8,10 +8,8 @@ public partial class DiveDto
     public string DiveName { get; set; } = string.Empty;
     public float Depth { get; set; }
     public int Duration { get; set; }
-
     public DateTime? DiveDate { get; set; }
     public string? Description { get; set; }
-
     public List<EquipmentDto> Equipments { get; set; } = [];
 
 }
