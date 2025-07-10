@@ -10,9 +10,9 @@ namespace DiveHub.Application.Services
     public class EquipmentService(IEquipmentRepository equipmentRepository,
     IMapper mapper) : IEquipmentService
     {
-        public async Task<EquipmentDto> CreateEquipmentAsync(EquipmentSaveDto equipementSaveDto)
+        public async Task<EquipmentDto> CreateEquipmentAsync(EquipmentSaveDto equipmentSaveDto)
         {
-            var equipment = mapper.Map<Equipment>(equipementSaveDto);
+            var equipment = mapper.Map<Equipment>(equipmentSaveDto);
             await equipmentRepository.AddAsync(equipment);
             return mapper.Map<EquipmentDto>(equipment);
         }

@@ -28,9 +28,22 @@ public class DiveService(
             // Charger les équipements existants depuis la base de données
             var equipments = await equipmentRepository.GetEquipmentsByIdsAsync(equipmentIds);
 
-            // Vérifier qu'ils existent tous (sécurité)
-            if (equipments.Count != equipmentIds.Count)
-                throw new InvalidOperationException("Un ou plusieurs équipements sélectionnés n'existent pas.");
+            // si un equipement n'existe pas, on le crée
+            var existingEquipmentIds = equipments.Select(e => e.EquipmentId).ToList();
+            var missingEquipments = diveSaveDto.Equipments
+                .Where(e => !existingEquipmentIds.Contains(e.EquipmentId))
+                .DistinctBy(e => e.EquipmentId)
+                .ToList();
+
+            if (missingEquipments.Count != 0)
+            {
+                // Mapper les EquipmentDto manquants en entités Equipment
+                var newEquipments = missingEquipments.Select(e => mapper.Map<Equipment>(e)).ToList();
+                await equipmentRepository.AddRangeAsync(newEquipments);
+                // Ajouter les nouveaux équipements à la liste
+                equipments.AddRange(newEquipments);
+            }
+                   
 
             // Associer les équipements existants à la plongée
             dive.Equipments = equipments;
