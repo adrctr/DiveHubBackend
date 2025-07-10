@@ -5,69 +5,112 @@ using DiveHub.Application.Services;
 using DiveHub.Core.Entities;
 using DiveHub.Infrastructure.repositories;
 using Moq;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace DiveHub.Tests.Services
+namespace DiveHub.Application.Tests.Services
 {
     public class EquipmentServiceTests
     {
         private readonly Mock<IEquipmentRepository> _equipmentRepositoryMock;
         private readonly Mock<IMapper> _mapperMock;
-        private readonly EquipmentService _equipmentService;
+        private readonly EquipmentService _service;
 
         public EquipmentServiceTests()
         {
             _equipmentRepositoryMock = new Mock<IEquipmentRepository>();
             _mapperMock = new Mock<IMapper>();
-
-            _equipmentService = new EquipmentService(
-                _equipmentRepositoryMock.Object,
-                _mapperMock.Object
-            );
+            _service = new EquipmentService(_equipmentRepositoryMock.Object, _mapperMock.Object);
         }
 
         [Fact]
-        public async Task CreateEquipmentAsync_Should_Map_And_Add_Equipment()
+        public async Task CreateEquipmentAsync_ShouldAddAndReturnDto()
         {
             // Arrange
-            var equipmentSaveDto = new EquipmentSaveDto
-            {
-                EquipmentName = "Ordinateur de plongée"
-            };
+            var saveDto = new EquipmentSaveDto { EquipmentName = "Palmes" };
+            var equipment = new Equipment { EquipmentId = 1, EquipmentName = "Palmes" };
+            var dto = new EquipmentDto { EquipmentId = 1, EquipmentName = "Palmes" };
 
-            var equipmentEntity = new Equipment
-            {
-                EquipmentId = 1,
-                EquipmentName = equipmentSaveDto.EquipmentName
-            };
-
-            var expectedEquipmentDto = new EquipmentDto
-            {
-                EquipmentId = 1,
-                EquipmentName = equipmentSaveDto.EquipmentName
-            };
-
-            // Setup mapper behavior
-            _mapperMock
-                .Setup(m => m.Map<Equipment>(equipmentSaveDto))
-                .Returns(equipmentEntity);
-
-            _mapperMock
-                .Setup(m => m.Map<EquipmentDto>(equipmentEntity))
-                .Returns(expectedEquipmentDto);
+            _mapperMock.Setup(m => m.Map<Equipment>(saveDto)).Returns(equipment);
+            _equipmentRepositoryMock.Setup(r => r.AddAsync(equipment)).Returns(Task.CompletedTask);
+            _mapperMock.Setup(m => m.Map<EquipmentDto>(equipment)).Returns(dto);
 
             // Act
-            var result = await _equipmentService.CreateEquipmentAsync(equipmentSaveDto);
+            var result = await _service.CreateEquipmentAsync(saveDto);
 
             // Assert
-            _equipmentRepositoryMock.Verify(r => r.AddAsync(It.Is<Equipment>(e =>
-                e.EquipmentName == equipmentSaveDto.EquipmentName
-            )), Times.Once);
+            Assert.Equal(dto, result);
+            _equipmentRepositoryMock.Verify(r => r.AddAsync(equipment), Times.Once);
+        }
 
-            Assert.NotNull(result);
-            Assert.Equal(expectedEquipmentDto.EquipmentId, result.EquipmentId);
-            Assert.Equal(expectedEquipmentDto.EquipmentName, result.EquipmentName);
+        [Fact]
+        public async Task GetAllEquipmentsAsync_ShouldReturnMappedDtos()
+        {
+            // Arrange
+            var equipments = new List<Equipment>
+            {
+                new Equipment { EquipmentId = 1, EquipmentName = "Palmes" },
+                new Equipment { EquipmentId = 2, EquipmentName = "Masque" }
+            };
+            var dtos = new List<EquipmentDto>
+            {
+                new EquipmentDto { EquipmentId = 1, EquipmentName = "Palmes" },
+                new EquipmentDto { EquipmentId = 2, EquipmentName = "Masque" }
+            };
+
+            _equipmentRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(equipments);
+            _mapperMock.Setup(m => m.Map<List<EquipmentDto>>(equipments)).Returns(dtos);
+
+            // Act
+            var result = await _service.GetAllEquipmentsAsync();
+
+            // Assert
+            Assert.Equal(dtos, result);
+        }
+
+        [Fact]
+        public async Task UpdateEquipmentAsync_ShouldUpdateWhenExists()
+        {
+            // Arrange
+            var dto = new EquipmentDto { EquipmentId = 1, EquipmentName = "Tuba" };
+            var equipment = new Equipment { EquipmentId = 1, EquipmentName = "Ancien" };
+
+            _equipmentRepositoryMock.Setup(r => r.GetByIdAsync(dto.EquipmentId)).ReturnsAsync(equipment);
+            _mapperMock.Setup(m => m.Map(dto, equipment));
+            _equipmentRepositoryMock.Setup(r => r.UpdateAsync(equipment)).Returns(Task.CompletedTask);
+
+            // Act
+            await _service.UpdateEquipmentAsync(dto);
+
+            // Assert
+            _equipmentRepositoryMock.Verify(r => r.UpdateAsync(equipment), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateEquipmentAsync_ShouldThrowIfNotExists()
+        {
+            // Arrange
+            var dto = new EquipmentDto { EquipmentId = 99, EquipmentName = "Inexistant" };
+            _equipmentRepositoryMock.Setup(r => r.GetByIdAsync(dto.EquipmentId)).ReturnsAsync((Equipment)null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _service.UpdateEquipmentAsync(dto));
+        }
+
+        [Fact]
+        public async Task DeleteEquipmentAsync_ShouldCallRepository()
+        {
+            // Arrange
+            int id = 5;
+            _equipmentRepositoryMock.Setup(r => r.DeleteAsync(id)).Returns(Task.CompletedTask);
+
+            // Act
+            await _service.DeleteEquipmentAsync(id);
+
+            // Assert
+            _equipmentRepositoryMock.Verify(r => r.DeleteAsync(id), Times.Once);
         }
     }
 }

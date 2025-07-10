@@ -6,6 +6,7 @@ using DiveHub.Infrastructure.Extensions;
 using DiveHub.Infrastructure.Persistence;
 using DiveHub.Infrastructure.repositories;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +15,6 @@ builder.Services.AddCors();
 
 // Add services to the container.
 builder.Services.AddControllers();
-
-// Swagger
-builder.Services.AddSwaggerGen();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -49,21 +47,15 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "DiveHub.WebApi v1");
-    });
-    app.UsePathBase("/swagger");
-
-
     // Crée la base de données au démarrage si elle n'existe pas
     using (var scope = app.Services.CreateScope())
     {
         var initializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
         initializer.Initialize(); // Appelle la méthode pour créer la base de données
     }
+
     app.MapOpenApi();
+    app.MapScalarApiReference();
     app.UseCors(options => options.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader());
 }
 

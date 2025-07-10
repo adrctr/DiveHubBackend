@@ -37,6 +37,12 @@ public class DatabaseInitializer(SQLiteDbContext context)
             LastName = "Couturier",
         });
 
+        var equipment1 = new Equipment { EquipmentId = 1, EquipmentName = "Bouteille 12L" };
+        var equipment2 = new Equipment { EquipmentId = 2, EquipmentName = "Gilet stabilisateur" };
+        var equipment3 = new Equipment { EquipmentId = 3, EquipmentName = "Go Pro" };
+        context.Equipments.AddRange(equipment1, equipment2, equipment3);
+
+
         context.Dives.Add(new Dive()
         {
             DiveId = 1,
@@ -45,44 +51,32 @@ public class DatabaseInitializer(SQLiteDbContext context)
             Depth = 90,
             DiveName = "A coral reef dive",
             Description = "Awesome colorfull coral reef dive",
-            Equipments = new List<Equipment>()
+
+            Equipments = new List<Equipment>
             {
-                new() {
-                    EquipmentId =1,
-                    EquipmentName = "Ordinateur de plongée"
-                },
-                new() {
-                    EquipmentId =2,
-                    EquipmentName = "Gopro"
-                }
+                equipment1,
+                equipment2
             }
-
-
-
-            //({
-            //    EquipmentId = 1,
-            //    EquipmentName = "Ordinateur de plongée"
-            //});
-            //// DivePhotos = new List<DivePhoto>()
-            // {
-            //     new DivePhoto
+            // DivePhotos = new List<DivePhoto>()
+            //{
+            //    new DivePhoto
+            //    {
+            //        DiveId = 1,
+            //        CreatedAt = DateTime.Now,
+            //        FileName = "test.jpg",
+            //        Url = "https://test.com/test.jpg"
+            //    }
+            //     },
+            //     DivePoints = new List<DivePoint>()
             //     {
-            //         DiveId = 1,
-            //         CreatedAt = DateTime.Now,
-            //         FileName = "test.jpg",
-            //         Url = "https://test.com/test.jpg"
-            //     }
-            // },
-            // DivePoints = new List<DivePoint>()
-            // {
-            //     new DivePoint
-            //     {
-            //         DiveId = 1,
-            //         Description = "secret dive",
-            //         Longitude = 102.733330,
-            //         Latitude = 5.916667
-            //     }
-            // }
+            //         new DivePoint
+            //         {
+            //             DiveId = 1,
+            //             Description = "secret dive",
+            //             Longitude = 102.733330,
+            //             Latitude = 5.916667
+            //         }
+            //}
         });
         
         context.SaveChanges();

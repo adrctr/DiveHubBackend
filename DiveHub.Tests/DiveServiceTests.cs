@@ -5,99 +5,147 @@ using DiveHub.Application.Services;
 using DiveHub.Core.Entities;
 using DiveHub.Infrastructure.repositories;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace DiveHub.Tests.Services
+namespace DiveHub.Application.Tests
 {
     public class DiveServiceTests
     {
-        private readonly Mock<IDiveRepository> _diveRepositoryMock;
+        private readonly Mock<IDiveRepository> _diveRepoMock;
+        private readonly Mock<IEquipmentRepository> _equipmentRepoMock;
         private readonly Mock<IMapper> _mapperMock;
-        private readonly DiveService _diveService;
+        private readonly DiveService _service;
 
         public DiveServiceTests()
         {
-            _diveRepositoryMock = new Mock<IDiveRepository>();
+            _diveRepoMock = new Mock<IDiveRepository>();
+            _equipmentRepoMock = new Mock<IEquipmentRepository>();
             _mapperMock = new Mock<IMapper>();
-
-            _diveService = new DiveService(
-                _diveRepositoryMock.Object,
-                _mapperMock.Object
-            );
+            _service = new DiveService(
+                _diveRepoMock.Object,
+                _equipmentRepoMock.Object,
+                _mapperMock.Object);
         }
 
         [Fact]
-        public async Task CreateDiveAsync_Should_Map_And_Add_Dive_With_Equipments()
+        public async Task CreateDiveAsync_Should_Add_Dive_And_Return_Dto()
         {
             // Arrange
-            var diveSaveDto = new DiveSaveDto
+            var saveDto = new DiveSaveDto
             {
-                DiveName = "Plongée à Bali",
-                DiveDate = DateTime.UtcNow,
-                Equipments =
-                [
-                    new() { EquipmentId = 1, EquipmentName = "Bouteille 12L" },
-                    new() { EquipmentId = 2, EquipmentName = "Gilet stabilisateur" },
-                    new() { EquipmentId = 3, EquipmentName = "Go Pro" }
-                ]
+                DiveName = "Test",
+                DiveDate = DateTime.Today,
+                Depth = 10f,
+                Duration = 60,
+                Description = "Desc",
+                Equipments = new List<EquipmentDto> { new EquipmentDto { EquipmentId = 1 } }
             };
 
+            var diveEntity = new Dive { DiveId = 1, UserId = 42 };
+            var diveDto = new DiveDto { DiveId = 1, DiveName = "Test" };
 
-            var diveEntity = new Dive
-            {
-                DiveId = 1,
-                DiveName = diveSaveDto.DiveName,
-                DiveDate = diveSaveDto.DiveDate,
-                Equipments =
-                [
-                    new() { EquipmentId = 1, EquipmentName = "Bouteille 12L" },
-                    new() { EquipmentId = 2, EquipmentName = "Gilet stabilisateur" },
-                    new() { EquipmentId = 3, EquipmentName = "Go Pro" }
-                ]
-            };
-
-            var expectedDiveDto = new DiveDto
-            {
-                DiveId = 1,
-                DiveName = diveSaveDto.DiveName,
-                DiveDate = diveSaveDto.DiveDate,
-                Equipments = diveSaveDto.Equipments
-            };
-
-            // Setup mapper behavior
-            _mapperMock
-                .Setup(m => m.Map<Dive>(diveSaveDto))
-                .Returns(diveEntity);
-
-            _mapperMock
-                .Setup(m => m.Map<DiveDto>(diveEntity))
-                .Returns(expectedDiveDto);
+            _mapperMock.Setup(m => m.Map<Dive>(saveDto)).Returns(diveEntity);
+            _equipmentRepoMock
+                .Setup(r => r.GetEquipmentsByIdsAsync(It.IsAny<List<int>>()))
+                .ReturnsAsync(new List<Equipment> { new Equipment { EquipmentId = 1 } });
+            _mapperMock.Setup(m => m.Map<DiveDto>(diveEntity)).Returns(diveDto);
 
             // Act
-            var result = await _diveService.CreateDiveAsync(diveSaveDto, 1);
+            var result = await _service.CreateDiveAsync(saveDto, userId: 42);
 
             // Assert
-            _diveRepositoryMock.Verify(r => r.AddAsync(It.Is<Dive>(d =>
-                d.DiveName == diveSaveDto.DiveName &&
-                d.DiveDate == diveSaveDto.DiveDate &&
-                d.Equipments.Count == diveSaveDto.Equipments.Count &&
-                d.Equipments.All(e => diveSaveDto.Equipments.Any(dto => dto.EquipmentId == e.EquipmentId && dto.EquipmentName == e.EquipmentName))
+            _diveRepoMock.Verify(r => r.AddAsync(diveEntity), Times.Once);
+            Assert.Equal(diveDto, result);
+        }
 
-            )), Times.Once);
+        [Fact]
+        public async Task GetDiveByIdAsync_Should_Return_Dto_When_Found()
+        {
+            // Arrange
+            var dive = new Dive { DiveId = 5 };
+            var dto = new DiveDto { DiveId = 5 };
+            _diveRepoMock.Setup(r => r.GetByIdAsync(5)).ReturnsAsync(dive);
+            _mapperMock.Setup(m => m.Map<DiveDto?>(dive)).Returns(dto);
 
-            Assert.NotNull(result);
-            Assert.Equal(expectedDiveDto.DiveId, result.DiveId);
-            Assert.Equal(expectedDiveDto.DiveName, result.DiveName);
-            Assert.Equal(expectedDiveDto.DiveDate, result.DiveDate);
-            Assert.Equal(expectedDiveDto.Equipments.Count, result.Equipments.Count);
+            // Act
+            var result = await _service.GetDiveByIdAsync(5);
 
-            foreach (var equipmentDto in expectedDiveDto.Equipments)
+            // Assert
+            Assert.Equal(dto, result);
+        }
+
+        [Fact]
+        public async Task GetAllDivesAsync_Should_Return_List_Of_Dtos()
+        {
+            // Arrange
+            var dives = new List<Dive> { new Dive { DiveId = 2 } };
+            var dtos = new List<DiveDto> { new DiveDto { DiveId = 2 } };
+            _diveRepoMock.Setup(r => r.GetDivesWihDetails()).ReturnsAsync(dives);
+            _mapperMock.Setup(m => m.Map<List<DiveDto>>(dives)).Returns(dtos);
+
+            // Act
+            var result = await _service.GetAllDivesAsync();
+
+            // Assert
+            Assert.Single(result);
+            Assert.Equal(2, result.First().DiveId);
+        }
+
+        [Fact]
+        public async Task UpdateDiveAsync_Should_Throw_When_Not_Found()
+        {
+            // Arrange
+            _diveRepoMock.Setup(r => r.GetDiveByIdAsync(10)).ReturnsAsync((Dive?)null);
+            var dto = new DiveDto { DiveId = 10 };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => _service.UpdateDiveAsync(dto));
+        }
+
+        [Fact]
+        public async Task UpdateDiveAsync_Should_Update_Equipments_Correctly()
+        {
+            // Arrange existing dive with one equipment
+            var existing = new Dive
             {
-                var matchingEquipment = result.Equipments.FirstOrDefault(e => e.EquipmentId == equipmentDto.EquipmentId);
-                Assert.NotNull(matchingEquipment);
-                Assert.Equal(equipmentDto.EquipmentName, matchingEquipment.EquipmentName);
-            }
+                DiveId = 3,
+                Equipments = new List<Equipment> { new Equipment { EquipmentId = 1 } }
+            };
+            var dto = new DiveDto
+            {
+                DiveId = 3,
+                Equipments = new List<EquipmentDto>
+                {
+                    new EquipmentDto { EquipmentId = 2 }
+                }
+            };
+            _diveRepoMock.Setup(r => r.GetDiveByIdAsync(3)).ReturnsAsync(existing);
+            _equipmentRepoMock
+                .Setup(r => r.GetEquipmentsByIdsAsync(It.Is<List<int>>(l => l.SequenceEqual(new List<int> { 2 }))))
+                .ReturnsAsync(new List<Equipment> { new Equipment { EquipmentId = 2 } });
+
+            // Act
+            await _service.UpdateDiveAsync(dto);
+
+            // Assert
+            Assert.Single(existing.Equipments);
+            Assert.Contains(existing.Equipments, e => e.EquipmentId == 2);
+            _diveRepoMock.Verify(r => r.UpdateAsync(existing), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteDiveAsync_Should_Call_Repository()
+        {
+            // Act
+            await _service.DeleteDiveAsync(7);
+
+            // Assert
+            _diveRepoMock.Verify(r => r.DeleteAsync(7), Times.Once);
         }
     }
 }
