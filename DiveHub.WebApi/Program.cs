@@ -42,6 +42,17 @@ builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 #endregion
 
+#region Authentication
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = "https://dev-dxwbqxcepg0d5pa0.ca.auth0.com/";
+        options.Audience = "https://divehub.api";
+    });
+
+builder.Services.AddAuthorization();
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -58,6 +69,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
     app.UseCors(options => options.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader());
 }
+
+app.UseAuthentication();
 
 app.UseCors("AllowSpecificOrigins");
 
