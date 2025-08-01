@@ -5,7 +5,10 @@ using DiveHub.Core.Interfaces;
 using DiveHub.Infrastructure.Extensions;
 using DiveHub.Infrastructure.Persistence;
 using DiveHub.Infrastructure.repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,18 +42,54 @@ builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 #endregion
 
 #region AutoMapper
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+// Par celle-ci :
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 #endregion
 
 #region Authentication
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
+IdentityModelEventSource.ShowPII = true; //DEBUG
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        options.Authority = "https://dev-dxwbqxcepg0d5pa0.ca.auth0.com/";
+        options.Authority = "https://divehub.ca.auth0.com/";
         options.Audience = "https://divehub.api";
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+                Console.WriteLine($"Authorization header brute: '{authHeader}'");
+
+                if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                {
+                    var token = authHeader.Substring("Bearer ".Length).Trim();
+                    Console.WriteLine($"Token extrait manuellement: '{token}'");
+                    context.Token = token; // assignation explicite
+                }
+                else
+                {
+                    Console.WriteLine("Authorization header absent ou mal formé.");
+                }
+
+                Console.WriteLine($"Token final dans context.Token : '{context.Token ?? "NULL"}'");
+
+                return Task.CompletedTask;
+            },
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine($"Token validé pour : {context.Principal.Identity?.Name}");
+                return Task.CompletedTask;
+            }
+        };
     });
 
-builder.Services.AddAuthorization();
+//builder.Services.AddAuthorization();
 #endregion
 
 var app = builder.Build();
@@ -67,12 +106,11 @@ if (app.Environment.IsDevelopment())
 
     app.MapOpenApi();
     app.MapScalarApiReference();
-    app.UseCors(options => options.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader());
+    app.UseCors(options => options.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
 }
 
 app.UseAuthentication();
-
-app.UseCors("AllowSpecificOrigins");
+app.UseAuthorization();
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
