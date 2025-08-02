@@ -42,20 +42,26 @@ builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 #endregion
 
 #region AutoMapper
-// Par celle-ci :
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 #endregion
 
 #region Authentication
-IdentityModelEventSource.ShowPII = true; //DEBUG
+#if DEBUG
+IdentityModelEventSource.ShowPII = true;
+#endif
+var jwtSection = builder.Configuration.GetSection("Jwt");
+var authority = jwtSection["Authority"];
+var audience = jwtSection["Audience"];
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = "https://divehub.ca.auth0.com/";
-        options.Audience = "https://divehub.api";
+        options.Authority = authority;
+        options.Audience = audience;
 
         options.Events = new JwtBearerEvents
         {
+#if DEBUG
             OnMessageReceived = context =>
             {
                 var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
@@ -76,6 +82,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
                 return Task.CompletedTask;
             },
+#endif
             OnAuthenticationFailed = context =>
             {
                 Console.WriteLine($"Authentication failed: {context.Exception.Message}");
@@ -89,7 +96,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-//builder.Services.AddAuthorization();
 #endregion
 
 var app = builder.Build();

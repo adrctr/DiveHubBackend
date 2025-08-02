@@ -2,11 +2,13 @@
 using DiveHub.Application.Interfaces;
 using DiveHub.Application.Services;
 using DiveHub.Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DiveHub.WebApi.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class DiveController(IDiveService diveService) : ControllerBase
 {

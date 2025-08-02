@@ -1,10 +1,12 @@
 ﻿using DiveHub.Application.Dto;
 using DiveHub.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EquipmentHub.WebApi.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class EquipmentController(IEquipmentService EquipmentService) : ControllerBase
 {
