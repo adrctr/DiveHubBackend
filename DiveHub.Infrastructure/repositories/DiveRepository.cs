@@ -24,6 +24,10 @@ public class DiveRepository(SQLiteDbContext context, IUserRepository userReposit
     {
         // Vérifier si l'utilisateur existe déjà
         var existingUser = await userRepository.GetByAuth0UserIdAsync(auth0UserId);
+        if (existingUser is null)
+        {
+            return Enumerable.Empty<Dive>();
+        }
         return await _dbcontext.Dives.Include(d => d.Equipments).Where(d => d.UserId == existingUser.UserId)
             .ToListAsync();
     }

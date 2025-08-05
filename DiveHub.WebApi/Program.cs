@@ -107,8 +107,8 @@ if (app.Environment.IsDevelopment())
     // Crée la base de données au démarrage si elle n'existe pas
     using (var scope = app.Services.CreateScope())
     {
-        var initializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
-        initializer.Initialize(); // Appelle la méthode pour créer la base de données
+        var context = scope.ServiceProvider.GetRequiredService<SQLiteDbContext>();
+        context.Database.EnsureCreated();
     }
 
     app.MapOpenApi();

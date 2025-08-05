@@ -16,8 +16,8 @@ public class DiveService(
     {
         // Mapper uniquement les propriétés simples (ne pas mapper Equipments ici !)
         Dive dive = mapper.Map<Dive>(diveSaveDto);
-        var user = userRepository.GetByAuth0UserIdAsync(useridauth0);
-        dive.UserId = user.Id;
+        var user = await userRepository.GetByAuth0UserIdAsync(useridauth0);
+        dive.UserId = user.UserId;
 
         // Récupérer les EquipmentId sélectionnés
         var equipmentIds = diveSaveDto.Equipments
