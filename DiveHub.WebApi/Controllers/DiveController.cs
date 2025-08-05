@@ -4,6 +4,7 @@ using DiveHub.Application.Services;
 using DiveHub.Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DiveHub.WebApi.Controllers;
 
@@ -16,7 +17,12 @@ public class DiveController(IDiveService diveService) : ControllerBase
     [ProducesResponseType<DiveDto>(StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateDive([FromBody] DiveSaveDto diveDto)
     {
-        DiveDto diveCreated = await diveService.CreateDiveAsync(diveDto, 1); //TODO: Change User ID 
+        var useridauth0 = GetCurrentAuth0UserId();
+        if (useridauth0 == null)
+        {
+            return Unauthorized("Utilisateur non authentifié");
+        }
+        DiveDto diveCreated = await diveService.CreateDiveAsync(diveDto, useridauth0);
         return Ok(diveCreated);
     }
    
@@ -31,7 +37,12 @@ public class DiveController(IDiveService diveService) : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<DiveDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllDives()
     {
-        var dives = await diveService.GetAllDivesAsync();
+        var userId = GetCurrentAuth0UserId();
+        if (userId == null)
+        {
+            return Unauthorized("Utilisateur non authentifié");
+        }
+        var dives = await diveService.GetAllDivesAsync(userId);
         return Ok(dives);
     }
     
@@ -39,6 +50,11 @@ public class DiveController(IDiveService diveService) : ControllerBase
     [ProducesResponseType(typeof(DiveDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateDive([FromBody] DiveDto diveDto)
     {
+        var userId = GetCurrentAuth0UserId();
+        if (userId == null)
+        {
+            return Unauthorized("Utilisateur non authentifié");
+        }
         await diveService.UpdateDiveAsync(diveDto);
         return Ok();
     }
@@ -48,5 +64,14 @@ public class DiveController(IDiveService diveService) : ControllerBase
     {
         await diveService.DeleteDiveAsync(id);
         return NoContent();
+    }
+
+    private string? GetCurrentAuth0UserId()
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
+                         User.FindFirst("sub")?.Value ?? 
+                         User.FindFirst("user_id")?.Value;
+        
+        return userIdClaim;
     }
 }

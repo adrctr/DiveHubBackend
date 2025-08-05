@@ -9,13 +9,15 @@ namespace DiveHub.Application.Services;
 public class DiveService(
     IDiveRepository diveRepository,
     IEquipmentRepository equipmentRepository,
+    IUserRepository userRepository,
     IMapper mapper) : IDiveService
 {
-    public async Task<DiveDto> CreateDiveAsync(DiveSaveDto diveSaveDto, int userId)
+    public async Task<DiveDto> CreateDiveAsync(DiveSaveDto diveSaveDto, string useridauth0)
     {
         // Mapper uniquement les propriétés simples (ne pas mapper Equipments ici !)
         Dive dive = mapper.Map<Dive>(diveSaveDto);
-        dive.UserId = userId;
+        var user = userRepository.GetByAuth0UserIdAsync(useridauth0);
+        dive.UserId = user.Id;
 
         // Récupérer les EquipmentId sélectionnés
         var equipmentIds = diveSaveDto.Equipments
@@ -61,9 +63,9 @@ public class DiveService(
         return mapper.Map<DiveDto?>(dive);
     }
 
-    public async Task<IEnumerable<DiveDto>> GetAllDivesAsync()
+    public async Task<IEnumerable<DiveDto>> GetAllDivesAsync(string auth0UserId)
     {
-        var dives = await diveRepository.GetDivesWihDetails();
+        var dives = await diveRepository.GetDivesWihDetails(auth0UserId);
         return mapper.Map<List<DiveDto>>(dives);
     }
 

@@ -5,12 +5,9 @@ using DiveHub.Application.Services;
 using DiveHub.Core.Entities;
 using DiveHub.Infrastructure.repositories;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 
-namespace DiveHub.Application.Tests.Services
+
+namespace DiveHub.Application.Tests
 {
     public class EquipmentServiceTests
     {
