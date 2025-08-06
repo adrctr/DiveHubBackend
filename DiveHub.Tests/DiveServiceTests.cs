@@ -17,6 +17,7 @@ namespace DiveHub.Application.Tests
     {
         private readonly Mock<IDiveRepository> _diveRepoMock;
         private readonly Mock<IEquipmentRepository> _equipmentRepoMock;
+        private readonly Mock<IUserRepository> _userRepoMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly DiveService _service;
 
@@ -24,10 +25,12 @@ namespace DiveHub.Application.Tests
         {
             _diveRepoMock = new Mock<IDiveRepository>();
             _equipmentRepoMock = new Mock<IEquipmentRepository>();
+            _userRepoMock = new Mock<IUserRepository>();
             _mapperMock = new Mock<IMapper>();
             _service = new DiveService(
                 _diveRepoMock.Object,
                 _equipmentRepoMock.Object,
+                _userRepoMock.Object,
                 _mapperMock.Object);
         }
 
@@ -35,31 +38,32 @@ namespace DiveHub.Application.Tests
         public async Task CreateDiveAsync_Should_Add_Dive_And_Return_Dto()
         {
             // Arrange
-            var saveDto = new DiveSaveDto
+            var diveSaveDto = new DiveSaveDto
             {
-                DiveName = "Test",
-                DiveDate = DateTime.Today,
-                Depth = 10f,
-                Duration = 60,
-                Description = "Desc",
+                DiveName = "Test Dive",
+                Depth = 25.5f,
+                Duration = 45,
+                DiveDate = DateTime.Now,
+                Description = "Test description",
                 Equipments = new List<EquipmentDto> { new EquipmentDto { EquipmentId = 1 } }
             };
-
-            var diveEntity = new Dive { DiveId = 1, UserId = 42 };
-            var diveDto = new DiveDto { DiveId = 1, DiveName = "Test" };
-
-            _mapperMock.Setup(m => m.Map<Dive>(saveDto)).Returns(diveEntity);
-            _equipmentRepoMock
-                .Setup(r => r.GetEquipmentsByIdsAsync(It.IsAny<List<int>>()))
-                .ReturnsAsync(new List<Equipment> { new Equipment { EquipmentId = 1 } });
-            _mapperMock.Setup(m => m.Map<DiveDto>(diveEntity)).Returns(diveDto);
+            
+            var user = new User { UserId = 1, Auth0UserId = "auth0|123456" };
+            var equipments = new List<Equipment> { new Equipment { EquipmentId = 1 } };
+            var dive = new Dive { DiveId = 1, UserId = 1, DiveName = "Test Dive" };
+            var diveDto = new DiveDto { DiveId = 1, DiveName = "Test Dive" };
+            
+            _userRepoMock.Setup(r => r.GetByAuth0UserIdAsync("auth0|123456")).ReturnsAsync(user);
+            _equipmentRepoMock.Setup(r => r.GetEquipmentsByIdsAsync(It.IsAny<List<int>>())).ReturnsAsync(equipments);
+            _mapperMock.Setup(m => m.Map<Dive>(diveSaveDto)).Returns(dive);
+            _mapperMock.Setup(m => m.Map<DiveDto>(dive)).Returns(diveDto);
 
             // Act
-            var result = await _service.CreateDiveAsync(saveDto, userId: 42);
+            var result = await _service.CreateDiveAsync(diveSaveDto, "auth0|123456");
 
             // Assert
-            _diveRepoMock.Verify(r => r.AddAsync(diveEntity), Times.Once);
             Assert.Equal(diveDto, result);
+            _diveRepoMock.Verify(r => r.AddAsync(dive), Times.Once);
         }
 
         [Fact]
@@ -84,11 +88,11 @@ namespace DiveHub.Application.Tests
             // Arrange
             var dives = new List<Dive> { new Dive { DiveId = 2 } };
             var dtos = new List<DiveDto> { new DiveDto { DiveId = 2 } };
-            _diveRepoMock.Setup(r => r.GetDivesWihDetails()).ReturnsAsync(dives);
+            _diveRepoMock.Setup(r => r.GetDivesWihDetails("auth0|123456")).ReturnsAsync(dives);
             _mapperMock.Setup(m => m.Map<List<DiveDto>>(dives)).Returns(dtos);
 
             // Act
-            var result = await _service.GetAllDivesAsync();
+            var result = await _service.GetAllDivesAsync("auth0|123456");
 
             // Assert
             Assert.Single(result);
@@ -125,6 +129,11 @@ namespace DiveHub.Application.Tests
                 }
             };
             _diveRepoMock.Setup(r => r.GetDiveByIdAsync(3)).ReturnsAsync(existing);
+            // Remplacez la ligne incorrecte suivante :
+            // .Setup(r => r.GetEquipmentsByIdsAsync(It.Is<List<int>>(l => l.SequenceEqual(new List<int> { 2 })))
+            // .ReturnsAsync(new List<Equipment> { new Equipment { EquipmentId = 2 } });
+
+            // Par la version correcte ci-dessous :
             _equipmentRepoMock
                 .Setup(r => r.GetEquipmentsByIdsAsync(It.Is<List<int>>(l => l.SequenceEqual(new List<int> { 2 }))))
                 .ReturnsAsync(new List<Equipment> { new Equipment { EquipmentId = 2 } });
