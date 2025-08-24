@@ -35,3 +35,4 @@ artifacts/
 /DiveHub.WebApi/DiveHubDB.db
 /DiveHub.WebApi/DiveHubDB.db-shm
 /DiveHub.WebApi/DiveHubDB.db-wal
+/DiveHub.WebApi/appsettings.Development.json
