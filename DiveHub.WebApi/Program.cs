@@ -39,7 +39,7 @@ builder.Services.AddOpenApi();
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
                        ?? builder.Configuration.GetConnectionString("PostgresConnection");
 
-// Ajout des services nécessaires
+// Ajout des services nécessaires 
 builder.Services.AddDbContext<DiveHubDbContext>(options =>
     options.UseNpgsql(connectionString));
 
