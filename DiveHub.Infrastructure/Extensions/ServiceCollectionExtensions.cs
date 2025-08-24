@@ -30,59 +30,17 @@ public class DatabaseInitializer(DiveHubDbContext context)
 {
     public void Initialize()
     {
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated(); // Crée la base de données et les tables si elles n'existent pas
-        //context.Users.Add(new User()
-        //{
-        //    UserId = 1,
-        //    Email = "adr.couturier@gmail.com",
-        //    CreatedAt = DateTime.UtcNow,
-        //    FirstName = "Adrien",
-        //    LastName = "Couturier",
-        //});
+        // Applique les migrations → crée les tables si elles n'existent pas
+        context.Database.Migrate();
 
-        var equipment1 = new Equipment { EquipmentId = 1, EquipmentName = "Bouteille 12L" };
-        var equipment2 = new Equipment { EquipmentId = 2, EquipmentName = "Gilet stabilisateur" };
-        var equipment3 = new Equipment { EquipmentId = 3, EquipmentName = "Go Pro" };
-        context.Equipments.AddRange(equipment1, equipment2, equipment3);
+        if (!context.Equipments.Any())
+        {
+            var equipment1 = new Equipment { EquipmentName = "Bouteille 12L" };
+            var equipment2 = new Equipment { EquipmentName = "Gilet stabilisateur" };
+            var equipment3 = new Equipment { EquipmentName = "Go Pro" };
 
-
-        //context.Dives.Add(new Dive()
-        //{
-        //    DiveId = 1,
-        //    UserId = 1,
-        //    DiveDate = DateTime.UtcNow,
-        //    Depth = 90,
-        //    DiveName = "A coral reef dive",
-        //    Description = "Awesome colorfull coral reef dive",
-
-        //    Equipments = new List<Equipment>
-        //    {
-        //        equipment1,
-        //        equipment2
-        //    }
-        //    // DivePhotos = new List<DivePhoto>()
-        //    //{
-        //    //    new DivePhoto
-        //    //    {
-        //    //        DiveId = 1,
-        //    //        CreatedAt = DateTime.Now,
-        //    //        FileName = "test.jpg",
-        //    //        Url = "https://test.com/test.jpg"
-        //    //    }
-        //    //     },
-        //    //     DivePoints = new List<DivePoint>()
-        //    //     {
-        //    //         new DivePoint
-        //    //         {
-        //    //             DiveId = 1,
-        //    //             Description = "secret dive",
-        //    //             Longitude = 102.733330,
-        //    //             Latitude = 5.916667
-        //    //         }
-        //    //}
-        //});
-        
-        context.SaveChanges();
+            context.Equipments.AddRange(equipment1, equipment2, equipment3);
+            context.SaveChanges();
+        }
     }
 }
