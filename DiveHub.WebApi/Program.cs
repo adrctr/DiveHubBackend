@@ -33,16 +33,15 @@ builder.Services.AddOpenApi();
 
 #region EF Core PostgreSQL
 
-// Récupération des variables d'environnement
-var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
-var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
-var dbName = Environment.GetEnvironmentVariable("DB_NAME");
-var dbUser = Environment.GetEnvironmentVariable("DB_USER");
-var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+// Récupère la connexion : 
+// 1. Si DATABASE_URL est défini en variable d’env → prend ça
+// 2. Sinon → prend depuis appsettings.json / appsettings.Development.json
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+                       ?? builder.Configuration.GetConnectionString("PostgresConnection");
 
 // Ajout des services nécessaires
 builder.Services.AddDbContext<DiveHubDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
+    options.UseNpgsql(connectionString));
 
 // Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
