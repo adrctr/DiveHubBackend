@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DiveHub.Infrastructure.Migrations
 {
-    [DbContext(typeof(SQLiteDbContext))]
+    [DbContext(typeof(DiveHubDbContext))]
     partial class SQLiteDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

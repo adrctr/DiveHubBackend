@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DiveHub.Infrastructure.Migrations
 {
-    [DbContext(typeof(SQLiteDbContext))]
+    [DbContext(typeof(DiveHubDbContext))]
     [Migration("20250709191010_InitialCreate")]
     partial class InitialCreate
     {

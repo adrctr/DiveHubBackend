@@ -8,9 +8,9 @@ namespace DiveHub.Infrastructure.repositories;
 /// <summary>
 /// // Implémentation générique d'un dépôt (Repository) pour la gestion des entités.
 /// </summary>
-/// <param name="context">SQLiteDbContext</param>
+/// <param name="context">DiveHubDbContext</param>
 /// <typeparam name="T">Entity</typeparam>
-public class GenericRepository<T>(SQLiteDbContext context) : IRepository<T>
+public class GenericRepository<T>(DiveHubDbContext context) : IRepository<T>
     where T : class
 {
     /// <summary>

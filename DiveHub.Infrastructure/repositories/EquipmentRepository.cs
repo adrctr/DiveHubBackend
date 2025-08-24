@@ -10,9 +10,9 @@ public interface IEquipmentRepository : IRepository<Equipment>
     Task<List<Equipment>> GetEquipmentsByIdsAsync(List<int> equipmentIds);
 }
 
-public class EquipmentRepository(SQLiteDbContext context) : GenericRepository<Equipment>(context), IEquipmentRepository
+public class EquipmentRepository(DiveHubDbContext context) : GenericRepository<Equipment>(context), IEquipmentRepository
 {
-    private readonly SQLiteDbContext _dbContext = context;
+    private readonly DiveHubDbContext _dbContext = context;
 
     public async Task<List<Equipment>> GetEquipmentsByIdsAsync(List<int> equipmentIds)
     {

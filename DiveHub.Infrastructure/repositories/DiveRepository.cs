@@ -11,9 +11,9 @@ public interface IDiveRepository : IRepository<Dive>
     Task<Dive?> GetDiveByIdAsync(int diveId);
 }
 
-public class DiveRepository(SQLiteDbContext context) : GenericRepository<Dive>(context), IDiveRepository
+public class DiveRepository(DiveHubDbContext context) : GenericRepository<Dive>(context), IDiveRepository
 {
-    private readonly SQLiteDbContext _dbcontext = context;
+    private readonly DiveHubDbContext _dbcontext = context;
 
     /// <summary>
     /// Retourne une liste de dives avec ses détails 

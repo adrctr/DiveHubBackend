@@ -19,17 +19,39 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-#region EF Core SQLite
-// Ajout des services nécessaires
-builder.Services.AddDbContext<SQLiteDbContext>(options =>
-    options.UseSqlite("Data Source=DiveHubDB.db"));
+//#region EF Core SQLite
+//// Ajout des services nécessaires
+//builder.Services.AddDbContext<DiveHubDbContext>(options =>
+//    options.UseSqlite("Data Source=DiveHubDB.db"));
 
+//builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+//builder.Services.AddScoped<IDiveRepository, DiveRepository>();
+//builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+
+//builder.Services.AddDatabaseInitialization("Data Source=DiveHubDB.db");
+//#endregion
+
+#region EF Core PostgreSQL
+
+// Récupération des variables d'environnement
+var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
+var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+var dbUser = Environment.GetEnvironmentVariable("DB_USER");
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+
+// Ajout des services nécessaires
+builder.Services.AddDbContext<DiveHubDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
+
+// Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IDiveRepository, DiveRepository>();
 builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
 
-builder.Services.AddDatabaseInitialization("Data Source=DiveHubDB.db");
+builder.Services.AddDatabaseInitialization(builder.Configuration.GetConnectionString("PostgresConnection"));
 #endregion
+
 #region services
 // Ajouter les services de l'application
 builder.Services.AddScoped<IUserService, UserService>();
@@ -39,7 +61,10 @@ builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 #endregion
 
 #region AutoMapper
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(config =>
+{
+    config.AddProfile<MappingProfile>();
+});
 #endregion
 
 var app = builder.Build();
