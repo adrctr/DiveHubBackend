@@ -69,8 +69,8 @@ builder.Services.AddAutoMapper(config =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     // Crée la base de données au démarrage si elle n'existe pas
     using (var scope = app.Services.CreateScope())
     {
@@ -81,7 +81,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
     app.UseCors(options => options.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader());
-}
+//}
 
 app.UseCors("AllowSpecificOrigins");
 
