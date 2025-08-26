@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace DiveHub.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class postgreInitial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,9 +16,9 @@ namespace DiveHub.Infrastructure.Migrations
                 name: "Equipments",
                 columns: table => new
                 {
-                    EquipmentId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    EquipmentName = table.Column<string>(type: "TEXT", nullable: false)
+                    EquipmentId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    EquipmentName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,12 +29,12 @@ namespace DiveHub.Infrastructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
-                    LastName = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,14 +45,14 @@ namespace DiveHub.Infrastructure.Migrations
                 name: "Dives",
                 columns: table => new
                 {
-                    DiveId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DiveName = table.Column<string>(type: "TEXT", nullable: false),
-                    DiveDate = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    Depth = table.Column<float>(type: "REAL", nullable: false),
-                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: true)
+                    DiveId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    DiveName = table.Column<string>(type: "text", nullable: false),
+                    DiveDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Depth = table.Column<float>(type: "real", nullable: false),
+                    Duration = table.Column<int>(type: "integer", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -68,8 +69,8 @@ namespace DiveHub.Infrastructure.Migrations
                 name: "DiveEquipment",
                 columns: table => new
                 {
-                    DivesDiveId = table.Column<int>(type: "INTEGER", nullable: false),
-                    EquipmentsEquipmentId = table.Column<int>(type: "INTEGER", nullable: false)
+                    DivesDiveId = table.Column<int>(type: "integer", nullable: false),
+                    EquipmentsEquipmentId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
