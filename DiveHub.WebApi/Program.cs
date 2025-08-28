@@ -81,7 +81,9 @@ var app = builder.Build();
 
     app.MapOpenApi();
     app.MapScalarApiReference();
-    app.UseCors(options => options.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader());
+    //app.UseCors(options => options.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader());
+    app.UseCors(options => options.WithOrigins("https://divehub-ui.onrender.com").AllowAnyMethod().AllowAnyHeader());
+
 //}
 
 app.UseCors("AllowSpecificOrigins");
