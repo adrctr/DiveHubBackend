@@ -15,10 +15,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
-                "https://divehub-ui.onrender.com/",   
-                "http://localhost:5173"              
-            )
+        policy.AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -69,7 +66,6 @@ using (var scope = app.Services.CreateScope())
 app.MapOpenApi();
 app.MapScalarApiReference();
 
-// 🚀 Activation de la policy CORS ici
 app.UseCors("AllowFrontend");
 
 app.UseStaticFiles();
