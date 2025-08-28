@@ -86,7 +86,7 @@ var app = builder.Build();
 
 //}
 
-app.UseCors("AllowSpecificOrigins");
+//app.UseCors("AllowSpecificOrigins");
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
