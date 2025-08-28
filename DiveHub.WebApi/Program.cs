@@ -16,8 +16,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-                "https://divehub-ui.onrender.com",   // ton front Render
-                "http://localhost:5173"              // ton front local (optionnel)
+                "https://divehub-ui.onrender.com/",   
+                "http://localhost:5173"              
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
