@@ -47,6 +47,7 @@ builder.Services.AddDbContext<DiveHubDbContext>(options =>
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IDiveRepository, DiveRepository>();
 builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddDatabaseInitialization(connectionString);
 #endregion

@@ -16,8 +16,11 @@ public class MappingProfile : Profile
     /// </summary>
     public MappingProfile()
     {
+        CreateMap<User, UserCreateDto>().ReverseMap();
+        CreateMap<User, UserUpdateDto>().ReverseMap();
         CreateMap<User, UserDto>().ReverseMap();
-        
+
+
         CreateMap<Dive, DiveDto>().ReverseMap();
         CreateMap<DiveSaveDto, Dive>().ReverseMap();
         CreateMap<DiveDetailDto, Dive>().ReverseMap();
