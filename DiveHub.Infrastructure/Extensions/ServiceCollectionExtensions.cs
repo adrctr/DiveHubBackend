@@ -36,6 +36,7 @@ public class DatabaseInitializer(DiveHubDbContext context)
         if (!context.Equipments.Any())
         {
             var equipment1 = new Equipment { EquipmentName = "Bouteille 12L" };
+            var equipment4 = new Equipment { EquipmentName = "Projecteur" };
             var equipment2 = new Equipment { EquipmentName = "Gilet stabilisateur" };
             var equipment3 = new Equipment { EquipmentName = "Go Pro" };
 

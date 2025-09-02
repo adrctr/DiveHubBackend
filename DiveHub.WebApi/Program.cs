@@ -10,14 +10,15 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Déclaration d’une policy CORS
+// CORS Policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        policy.WithOrigins("http://localhost:5173")
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowCredentials(); // si tu envoies des tokens ou cookies
     });
 });
 
@@ -26,8 +27,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 #region EF Core PostgreSQL
-
-var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") //GetEnvironment Variable for Render purpose
                        ?? builder.Configuration.GetConnectionString("PostgresConnection");
 
 builder.Services.AddDbContext<DiveHubDbContext>(options =>
@@ -38,7 +38,7 @@ builder.Services.AddScoped<IDiveRepository, DiveRepository>();
 builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-builder.Services.AddDatabaseInitialization(connectionString);
+builder.Services.AddDatabaseInitialization(connectionString!);
 #endregion
 
 #region services
@@ -66,9 +66,14 @@ using (var scope = app.Services.CreateScope())
 app.MapOpenApi();
 app.MapScalarApiReference();
 
+// ⚠️ Logger après Build()
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Chaîne de connexion utilisée : {ConnectionString}", connectionString);
+// ⚠️ Ordre correct
 app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
-
+app.UseCors("AllowFrontend");  // après HTTPS, avant les controllers
+app.UseAuthorization();         // si tu ajoutes auth
 app.UseStaticFiles();
 app.MapControllers();
+
 app.Run();

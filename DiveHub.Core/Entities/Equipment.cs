@@ -11,6 +11,6 @@ namespace DiveHub.Core.Entities
         public int EquipmentId { get; set; }
         public string EquipmentName { get; set; } = null!;
 
-        public ICollection<Dive> Dives { get; set; } = new List<Dive>();
+        public ICollection<Dive> Dives { get; set; } = [];
     }
 }

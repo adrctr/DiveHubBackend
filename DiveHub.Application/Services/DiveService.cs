@@ -3,19 +3,25 @@ using DiveHub.Application.Dto;
 using DiveHub.Application.Interfaces;
 using DiveHub.Core.Entities;
 using DiveHub.Infrastructure.repositories;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 namespace DiveHub.Application.Services;
 
 public class DiveService(
     IDiveRepository diveRepository,
     IEquipmentRepository equipmentRepository,
+    IUserRepository userRepository,
     IMapper mapper) : IDiveService
 {
-    public async Task<DiveDto> CreateDiveAsync(DiveSaveDto diveSaveDto, int userId)
+    public async Task<DiveDto> CreateDiveAsync(DiveSaveDto diveSaveDto, string useridauth0)
     {
         // Mapper uniquement les propriétés simples (ne pas mapper Equipments ici !)
         Dive dive = mapper.Map<Dive>(diveSaveDto);
-        dive.UserId = userId;
+
+        var user = await userRepository.GetByAuth0UserIdAsync(useridauth0);
+        if (user == null)
+        {
+            return null;
+        }
+        dive.UserId = user.UserId;
 
         // Récupérer les EquipmentId sélectionnés
         var equipmentIds = diveSaveDto.Equipments
@@ -23,7 +29,7 @@ public class DiveService(
             .Distinct()
             .ToList();
 
-        if (equipmentIds.Any())
+        if (equipmentIds.Count != 0)
         {
             // Charger les équipements existants depuis la base de données
             var equipments = await equipmentRepository.GetEquipmentsByIdsAsync(equipmentIds);
@@ -43,7 +49,6 @@ public class DiveService(
                 // Ajouter les nouveaux équipements à la liste
                 equipments.AddRange(newEquipments);
             }
-                   
 
             // Associer les équipements existants à la plongée
             dive.Equipments = equipments;
@@ -54,16 +59,23 @@ public class DiveService(
 
         return mapper.Map<DiveDto>(dive);
     }
-    
+
     public async Task<DiveDto?> GetDiveByIdAsync(int diveId)
     {
         var dive = await diveRepository.GetByIdAsync(diveId);
         return mapper.Map<DiveDto?>(dive);
     }
 
-    public async Task<IEnumerable<DiveDto>> GetAllDivesAsync()
+    public async Task<IEnumerable<DiveDto>> GetAllDivesAsync(string auth0UserId)
     {
-        var dives = await diveRepository.GetDivesWihDetails();
+        // Vérifier si l'utilisateur existe déjà
+        var existingUser = await userRepository.GetByAuth0UserIdAsync(auth0UserId);
+
+        if (existingUser is null)
+        {
+            return [];
+        }
+        var dives = await diveRepository.GetDivesWihDetails(existingUser.UserId);
         return mapper.Map<List<DiveDto>>(dives);
     }
 
